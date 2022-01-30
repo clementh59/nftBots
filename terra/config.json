@@ -1,0 +1,24 @@
+{
+  "timeBetweenTerraFinderRequests": 1500,
+  "contracts": {
+    "randomEarth": "terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t",
+    "galactic_punks": "terra103z9cnqm8psy0nyxqtugg6m7xnwvlkqdzm4s4k"
+  },
+  "randomEarthCollectionHandled": [
+    "terra103z9cnqm8psy0nyxqtugg6m7xnwvlkqdzm4s4k"
+  ],
+  "mongo": {
+    "uri": "mongodb+srv://rpi:v2Mnv1ryLu2LixIk@cluster0.ajzpx.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+    "dbs": {
+      "settings": "terraSettings",
+      "collections": "terraCollections"
+    }
+  },
+  "constants": {
+    "order": {
+      "AUCTION": 2,
+      "SALE": 1,
+      "NONE": 0
+    }
+  }
+}

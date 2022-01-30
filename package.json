@@ -1,0 +1,25 @@
+{
+  "name": "rpibots",
+  "version": "1.0.0",
+  "description": "Some bots that help increasing my crypto bags",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "nyc ./node_modules/mocha/bin/mocha --timeout 45000 './**/test/**/*.spec.js'",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "mocha": "^9.2.0",
+    "mongodb": "^4.3.1",
+    "node-abort-controller": "^3.0.1",
+    "node-fetch": "^3.2.0",
+    "nodemailer": "^6.7.2",
+    "nyc": "^15.1.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6"
+  }
+}

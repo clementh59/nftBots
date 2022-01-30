@@ -1,0 +1,8 @@
+version: '3'
+services:
+  randomearth:
+    build: ./terra
+    ports:
+      - "80"
+volumes:
+  mongo-data:
