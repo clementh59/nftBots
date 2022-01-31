@@ -9,7 +9,8 @@ import {
     _addItemToCollection_,
     _addRankToItems_,
     _addUniqueIndex_,
-    _createCollection_
+    _createCollection_,
+    _updateItem_
 } from "../db/db.js";
 import {createRequire} from "module";
 
@@ -74,13 +75,7 @@ export const updateItemWithObjectId = async (collectionKey, id, newValues) => {
  * @returns {Promise<boolean>}
  */
 export const updateItem = async (collectionKey, query, newValues, unsetValues = {}) => {
-    try {
-        const newVal = {$set: newValues, $unset: unsetValues};
-        const res = await client.db(getCollectionDBNameFromdbName(dbName)).collection(collectionKey).updateOne(query, newVal);
-        return res.acknowledged;
-    } catch (e) {
-        return false;
-    }
+    return _updateItem_(client, dbName, collectionKey, query, newValues, unsetValues);
 }
 
 /**
