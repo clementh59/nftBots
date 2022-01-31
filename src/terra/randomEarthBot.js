@@ -1,7 +1,7 @@
 import {priceInLuna, retrieveAndAnalyzeTxs} from "../utils.js";
 import {getLastTransactions} from "./terraUtils.js";
 import {createRequire} from "module";
-import {closeConnection, initConnection, updateItem} from "./terraDB.js";
+import {closeConnection, initConnection, retrieveItems, updateItem, updateItems} from "./terraDB.js";
 import {getLastTransactionIdAnalyzed, setLastTransactionAnalyzed} from "./infoAndStatusDB/infoAndStatusDB.js";
 import {addToLogSystem} from "../logSystem.js";
 
@@ -16,8 +16,6 @@ export const config = require("./config.json")
 const addToDB = async (info, contractAddress) => {
     if (!config.randomEarthCollectionHandled.includes(contractAddress))
         return;
-    if (info.id === '259234166680326170938435858994229903242')
-        console.log(info);
     await updateItem(contractAddress, {'token_id': info.id}, {
         order: config.constants.order.SALE,
         marketplace: 'randomEarth',
@@ -40,6 +38,8 @@ const removeFromDB = async (info, contractAddress) => {
     if (!config.randomEarthCollectionHandled.includes(contractAddress))
         return;
 
+    // any change here needs to be changed also in removeExpiredSales() for consistency when removing events
+
     const update = {
         order: config.constants.order.NONE,
     }
@@ -47,10 +47,23 @@ const removeFromDB = async (info, contractAddress) => {
     if (info.owner)
         update.owner = info.owner;
 
-    if (info.id === '259234166680326170938435858994229903242')
-        console.log(info);
-
     await updateItem(contractAddress, {'token_id': info.id}, update, {marketplace: "", price: "", status: ""});
+}
+
+/**
+ * Update the db to remove the expired sales
+ * @returns {Promise<void>}
+ */
+const removeExpiredSales = async () => {
+    for (let i = 0; i < config.randomEarthCollectionHandled.length; i++) {
+        const now = new Date().getTime()/1000;
+
+        // any change here needs to be changed also in removeFromDB() for consistency when removing events
+
+        await updateItems(config.randomEarthCollectionHandled[i], {'status.expiration': {$lt: now}}, {
+            order: config.constants.order.NONE,
+        }, {marketplace: "", price: "", status: ""});
+    }
 }
 
 /**
@@ -244,8 +257,8 @@ const getLastTxs = async (offset) => {
  * The function that is called when db is up to date with the blockchain
  * @returns {Promise<void>}
  */
-const endOfLoopTreatment = async () => {
-    //await removeExpiredSales();
+export const endOfLoopTreatment = async () => {
+    await removeExpiredSales();
     //await analyzeSales();
 }
 
