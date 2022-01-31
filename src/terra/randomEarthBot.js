@@ -1,7 +1,9 @@
 import {priceInLuna, retrieveAndAnalyzeTxs} from "../utils.js";
 import {getLastTransactions} from "./terraUtils.js";
 import {createRequire} from "module";
-import {closeConnection, initConnection, updateItem} from "./db/db.js";
+import {closeConnection, initConnection, updateItem} from "./terraDB.js";
+import {getLastTransactionIdAnalyzed, setLastTransactionAnalyzed} from "./infoAndStatusDB/infoAndStatusDB.js";
+import {addToLogSystem} from "../logSystem.js";
 
 const require = createRequire(import.meta.url);
 export const config = require("./config.json")
@@ -14,6 +16,8 @@ export const config = require("./config.json")
 const addToDB = async (info, contractAddress) => {
     if (!config.randomEarthCollectionHandled.includes(contractAddress))
         return;
+    if (info.id === '259234166680326170938435858994229903242')
+        console.log(info);
     await updateItem(contractAddress, {'token_id': info.id}, {
         order: config.constants.order.SALE,
         marketplace: 'randomEarth',
@@ -42,6 +46,9 @@ const removeFromDB = async (info, contractAddress) => {
 
     if (info.owner)
         update.owner = info.owner;
+
+    if (info.id === '259234166680326170938435858994229903242')
+        console.log(info);
 
     await updateItem(contractAddress, {'token_id': info.id}, update, {marketplace: "", price: "", status: ""});
 }
@@ -224,7 +231,7 @@ export const analyzeRandomEarthTransaction = async (tx) => {
         if (!res)
             res = await tryAnalyzingTxSolution3(tx, msg);
         if (!res) {
-            // todo: log somewhere
+            await addToLogSystem(JSON.stringify(tx));
         }
     }));
 }
@@ -242,13 +249,15 @@ const endOfLoopTreatment = async () => {
     //await analyzeSales();
 }
 
-export const randomEarthBot = () => {
+export const randomEarthBot = async () => {
+    const lastTxAnalyzed = await getLastTransactionIdAnalyzed();
     retrieveAndAnalyzeTxs({
         "getLastTransactions": getLastTxs,
         "analyzeTransaction": analyzeRandomEarthTransaction,
-        "lastTransactionIdAnalyzed": 0, //todo
+        "lastTransactionIdAnalyzed": lastTxAnalyzed,
+        "setLastTransactionAnalyzed": setLastTransactionAnalyzed,
         "instance": "RandomEarth",
         "timeBetweenRequests": config.timeBetweenTerraFinderRequests,
-        "endOfLoopTreatment": endOfLoopTreatment
+        "endOfLoopTreatment": endOfLoopTreatment,
     }, 0);
 }

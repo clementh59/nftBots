@@ -3,7 +3,7 @@ import {
     addItemToCollection, addRankToItems,
     closeConnection,
     initConnection, updateItems,
-} from "../db/db.js";
+} from "../terraDB.js";
 import {createRequire} from "module";
 const require = createRequire(import.meta.url);
 const config = require("../config.json")
