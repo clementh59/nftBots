@@ -10,7 +10,7 @@ import {
     _addRankToItems_,
     _addUniqueIndex_,
     _createCollection_,
-    _updateItem_
+    _updateItem_, _upsertItem_, _getCollectionsName_
 } from "../db/db.js";
 import {createRequire} from "module";
 
@@ -120,6 +120,20 @@ export const addItemsToCollection = async (collectionKey, items) => {
     return _addItemsToCollection_(client, dbName, collectionKey, items);
 }
 
+///////////////////            DATABASE UPSERT         ///////////////////
+
+/**
+ * Insert an item in the db - update it if it exists
+ * @param {string} collectionKey - the collection name in the mongo db
+ * @param {{}} query - e.g { _id: ObjectId('61f68d54dd363a7674c9357f') }
+ * @param {{}} values - e.g {name: "Mickey", address: "Canyon 123" } - the values to set or update
+ * @param {{}} unsetValues - e.g {name: "", address: "" } - the values to remove
+ * @returns {Promise<boolean>}
+ */
+export const upsertItem = async (collectionKey, query, values, unsetValues = {}) => {
+    return _upsertItem_(client, dbName, collectionKey, query, values, unsetValues);
+}
+
 ///////////////////             DATABASE MANAGEMENT         ///////////////////
 
 /**
@@ -160,6 +174,29 @@ export const addUniqueIndex = async (collectionKey, fieldParameter) => {
  */
 export const createCollection = async (collectionKey) => {
     return _createCollection_(client, dbName, collectionKey);
+}
+
+/**
+ * Rename a collection
+ * @param {string} collectionKey - the collection name
+ * @param {string} newCollectionKey
+ * @returns {Promise<boolean>} true if it succeeded - false otherwise
+ */
+export const renameCollection = async (collectionKey, newCollectionKey) => {
+    try {
+        await client.db(dbName).collection(collectionKey).rename(newCollectionKey);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+/**
+ * Get the collections name of the db
+ * @returns {Promise<string[]>} the collections
+ */
+export const getCollectionsName = async () => {
+    return _getCollectionsName_(client, dbName);
 }
 
 /**

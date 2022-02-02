@@ -13,7 +13,7 @@ import {
     _addRankToItems_,
     _updateItems_,
     _retrieveCheapestItems_,
-    _updateItem_
+    _updateItem_, _upsertItem_, _renameCollection_, _getCollectionsName_
 } from "../db/db.js";
 import {createRequire} from "module";
 const require = createRequire(import.meta.url);
@@ -39,6 +39,7 @@ describe('connection and closing function', () => {
 
 describe('collection', () => {
     const collectionKey = 'automatedTests';
+    const newCollectionKey = 'automatedTestsRenamed';
     const items = [
         {key: 'test1', score: 2.2, price: 1},
         {key: 'test2', score : 1.1, price: 3},
@@ -146,8 +147,41 @@ describe('collection', () => {
         expect(item.price).to.be.equal(undefined);
     });
 
+    it('should insert an item using upsert', async () => {
+        const res = await _upsertItem_(client, dbName, collectionKey, {key: 'test1010'}, {
+            'key': 'test1010',
+            'testKey': 'testKey',
+            'name': 'test',
+        });
+        expect(res).to.be.equal(true);
+        const item = (await _retrieveItems_(client, dbName, collectionKey, {key: 'test1010'}, 1))[0];
+        expect(item.name).to.be.equal('test');
+    });
+
+    it('should update an item using upsert', async () => {
+        const res = await _upsertItem_(client, dbName, collectionKey, {key: 'test1010'}, {
+            'key': 'test1010',
+        }, {'name': ''});
+        expect(res).to.be.equal(true);
+        const item = (await _retrieveItems_(client, dbName, collectionKey, {key: 'test1010'}, 1))[0];
+        expect(item.name).to.be.equal(undefined);
+        expect(item.testKey).to.be.equal('testKey');
+    });
+
+    it('should rename a collection', async () => {
+        const res = await _renameCollection_(client, dbName, collectionKey, newCollectionKey);
+        expect(res).to.be.equal(true);
+        const item = (await _retrieveItems_(client, dbName, newCollectionKey, {key: 'test1010'}, 1))[0];
+        expect(item.testKey).to.be.equal('testKey');
+    });
+
+    it('should retrieve the collections name', async () => {
+        const res = await _getCollectionsName_(client, dbName);
+        console.log(res.includes(newCollectionKey));
+    });
+
     it('should delete a collection', async () => {
-        const res = await _deleteCollection_(client, dbName, collectionKey);
+        const res = await _deleteCollection_(client, dbName, newCollectionKey);
         expect(res).to.be.equal(true);
     });
 });

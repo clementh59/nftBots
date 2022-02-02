@@ -2,10 +2,28 @@
   "timeBetweenTerraFinderRequests": 10,
   "contracts": {
     "randomEarth": "terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t",
-    "galactic_punks": "terra103z9cnqm8psy0nyxqtugg6m7xnwvlkqdzm4s4k"
+    "galactic_punks": "terra103z9cnqm8psy0nyxqtugg6m7xnwvlkqdzm4s4k",
+    "luna_bulls": "terra1trn7mhgc9e2wfkm5mhr65p3eu7a2lc526uwny2",
+    "terrapins": "terra1f89xq3qhu98v4jch4y5xcrkhl9gytrne99x74t",
+    "spaceToadz": "terra1ycp3azjymqckrdlzpp88zfyk6x09m658c2c63d",
+    "terraWhales": "terra1jdt2wnfhgy4ptk6m5kxacyj0k6e8rc7e2ugulz",
+    "crunks": "terra1sux7jjk9vfd0q6z0l99wpg07yd0wme0ac9le40",
+    "planet_of_lunapes": "terra1x6wjugqwn2cwmjwrk603hmxwxcmk9n3uzzmhvh",
+    "terrabots": "terra1hj0dga445h3faxu85gm0293608qntsj3a727ck",
+    "galaxy_baby_ape_club": "terra1598rvtgufwr7pnpqhrlajjrmvte4l8a6xkty6y"
   },
-  "randomEarthCollectionHandled": [
-    "terra103z9cnqm8psy0nyxqtugg6m7xnwvlkqdzm4s4k"
+  "collectionHandled": [
+    {"name": "galactic_punks", "itemsAlreadyInDB": true},
+    {"name": "luna_bulls", "itemsAlreadyInDB": true},
+    {"name": "terrapins", "itemsAlreadyInDB": true},
+    {"name": "spaceToadz", "itemsAlreadyInDB": true},
+    {"name": "crunks", "itemsAlreadyInDB": true},
+    {"name": "planet_of_lunapes", "itemsAlreadyInDB": true},
+    {"name": "terrabots", "itemsAlreadyInDB": true},
+    {"name": "galaxy_baby_ape_club", "itemsAlreadyInDB": true},
+
+
+    {"name": "default", "itemsAlreadyInDB": true, "buy": false}
   ],
   "mongo": {
     "uri": "mongodb+srv://rpi:v2Mnv1ryLu2LixIk@cluster0.ajzpx.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",

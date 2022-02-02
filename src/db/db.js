@@ -40,7 +40,7 @@ export const _retrieveItemsSorted_ = async (client, dbName, collectionKey, filte
  */
 export const _retrieveCheapestItems_ = async (client, dbName, collectionKey, filter = {}, limit = 10, skip = 0) => {
     const _filter = {
-        price : { $exists: true, $ne: null },
+        price: {$exists: true, $ne: null},
         ...filter
     }
     return client.db(dbName).collection(collectionKey).find(_filter).sort({price: 1}).skip(skip).limit(limit).toArray();
@@ -60,7 +60,7 @@ export const _updateItemWithObjectId_ = async (client, dbName, collectionKey, id
     let query;
 
     if (typeof id === 'string')
-        query = { _id: ObjectId(id) };
+        query = {_id: ObjectId(id)};
     else
         query = {_id: id};
 
@@ -124,7 +124,7 @@ export const _addRankToItems_ = async (client, dbName, collectionKey, sort) => {
         for (let i = 0; i < items.length; i++) {
             await _updateItemWithObjectId_(client, dbName, collectionKey, items[i]._id, {rank: rank++});
         }
-        skip+=items.length;
+        skip += items.length;
     } while (items.length > 0)
 }
 
@@ -157,6 +157,28 @@ export const _addItemToCollection_ = async (client, dbName, collectionKey, item)
 export const _addItemsToCollection_ = async (client, dbName, collectionKey, items) => {
     try {
         const res = await client.db(dbName).collection(collectionKey).insertMany(items);
+        return res.acknowledged;
+    } catch (e) {
+        return false;
+    }
+}
+
+///////////////////            DATABASE UPSERT         ///////////////////
+
+/**
+ * Insert an item in the db - update it if it exists
+ * @param {MongoClient} client
+ * @param {string} dbName - the db name
+ * @param {string} collectionKey - the collection name in the mongo db
+ * @param {{}} query - e.g { _id: ObjectId('61f68d54dd363a7674c9357f') }
+ * @param {{}} values - e.g {name: "Mickey", address: "Canyon 123" } - the values to set or update
+ * @param {{}} unsetValues - e.g {name: "", address: "" } - the values to remove
+ * @returns {Promise<boolean>}
+ */
+export const _upsertItem_ = async (client, dbName, collectionKey, query, values, unsetValues = {}) => {
+    try {
+        const newVal = {$set: values, $unset: unsetValues};
+        const res = await client.db(dbName).collection(collectionKey).updateOne(query, newVal, {upsert: true});
         return res.acknowledged;
     } catch (e) {
         return false;
@@ -227,6 +249,33 @@ export const _createCollection_ = async (client, dbName, collectionKey) => {
     } catch (e) {
         return false;
     }
+}
+
+/**
+ * Rename a collection
+ * @param {MongoClient} client
+ * @param {string} dbName - the db name
+ * @param {string} collectionKey - the collection name
+ * @param {string} newCollectionKey
+ * @returns {Promise<boolean>} true if it succeeded - false otherwise
+ */
+export const _renameCollection_ = async (client, dbName, collectionKey, newCollectionKey) => {
+    try {
+        await client.db(dbName).collection(collectionKey).rename(newCollectionKey);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+/**
+ * Get the collections name of the db
+ * @param {MongoClient} client
+ * @param {string} dbName - the db name
+ * @returns {Promise<string[]>} the collections
+ */
+export const _getCollectionsName_ = async (client, dbName) => {
+    return (await (await client.db(dbName).listCollections()).toArray()).map((i) => i.name);
 }
 
 /**

@@ -1,7 +1,15 @@
 import {priceInLuna, retrieveAndAnalyzeTxs} from "../utils.js";
-import {getLastTransactions} from "./terraUtils.js";
+import {getCollectionNameWithContract, getLastTransactions} from "./terraUtils.js";
 import {createRequire} from "module";
-import {closeConnection, initConnection, retrieveItems, updateItem, updateItems} from "./terraDB.js";
+import {
+    closeConnection,
+    getCollectionsName,
+    initConnection,
+    retrieveItems,
+    updateItem,
+    updateItems,
+    upsertItem
+} from "./terraDB.js";
 import {getLastTransactionIdAnalyzed, setLastTransactionAnalyzed} from "./infoAndStatusDB/infoAndStatusDB.js";
 import {addToLogSystem} from "../logSystem.js";
 
@@ -14,9 +22,8 @@ export const config = require("./config.json")
  * @param {string} contractAddress
  */
 const addToDB = async (info, contractAddress) => {
-    if (!config.randomEarthCollectionHandled.includes(contractAddress))
-        return;
-    await updateItem(contractAddress, {'token_id': info.id}, {
+    await upsertItem(getCollectionNameWithContract(contractAddress), {'token_id': info.id}, {
+        token_id: info.id,
         order: config.constants.order.SALE,
         marketplace: 'randomEarth',
         price: info.price,
@@ -35,32 +42,35 @@ const addToDB = async (info, contractAddress) => {
  * @param {string} contractAddress
  */
 const removeFromDB = async (info, contractAddress) => {
-    if (!config.randomEarthCollectionHandled.includes(contractAddress))
-        return;
-
-    // any change here needs to be changed also in removeExpiredSales() for consistency when removing events
+    // any change here needs to be changed also in removeRandomEarthExpiredSales() for consistency when removing events
 
     const update = {
+        token_id: info.id,
         order: config.constants.order.NONE,
     }
 
     if (info.owner)
         update.owner = info.owner;
 
-    await updateItem(contractAddress, {'token_id': info.id}, update, {marketplace: "", price: "", status: ""});
+    await upsertItem(getCollectionNameWithContract(contractAddress), {'token_id': info.id}, update, {
+        marketplace: "",
+        price: "",
+        status: ""
+    });
 }
 
 /**
  * Update the db to remove the expired sales
  * @returns {Promise<void>}
  */
-const removeExpiredSales = async () => {
-    for (let i = 0; i < config.randomEarthCollectionHandled.length; i++) {
-        const now = new Date().getTime()/1000;
+const removeRandomEarthExpiredSales = async () => {
+    const collections = await getCollectionsName();
+    for (let i = 0; i < collections.length; i++) {
+        const now = new Date().getTime() / 1000;
 
         // any change here needs to be changed also in removeFromDB() for consistency when removing events
-
-        await updateItems(config.randomEarthCollectionHandled[i], {'status.expiration': {$lt: now}}, {
+        // todo: add marketplace 'randomEarth' dans la query
+        await updateItems(collections[i], {'status.expiration': {$lt: now}}, {
             order: config.constants.order.NONE,
         }, {marketplace: "", price: "", status: ""});
     }
@@ -258,7 +268,7 @@ const getLastTxs = async (offset) => {
  * @returns {Promise<void>}
  */
 export const endOfLoopTreatment = async () => {
-    await removeExpiredSales();
+    await removeRandomEarthExpiredSales();
     //await analyzeSales();
 }
 
