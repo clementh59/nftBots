@@ -69,8 +69,7 @@ const removeRandomEarthExpiredSales = async () => {
         const now = new Date().getTime() / 1000;
 
         // any change here needs to be changed also in removeFromDB() for consistency when removing events
-        // todo: add marketplace 'randomEarth' dans la query
-        await updateItems(collections[i], {'status.expiration': {$lt: now}}, {
+        await updateItems(collections[i], {'status.expiration': {$lt: now}, 'marketplace': 'randomEarth'}, {
             order: config.constants.order.NONE,
         }, {marketplace: "", price: "", status: ""});
     }
