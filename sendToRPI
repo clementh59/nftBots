@@ -1,0 +1,3 @@
+scp package.json pi@192.168.1.33:/home/pi/rpiBots
+scp package-lock.json pi@192.168.1.33:/home/pi/rpiBots
+scp -r ./src pi@192.168.1.33:/home/pi/rpiBots
