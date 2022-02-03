@@ -7,11 +7,13 @@
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --timeout 100000 './src/test/*.spec.js'",
     "terratest": "./node_modules/mocha/bin/mocha --timeout 2000 './src/test/terra.spec.js'",
-    "start": "node index.js"
+    "runTerra": "node src/terra/terraBot.js",
+    "api": "node src/api/server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "fs": "0.0.1-security",
     "mocha": "^9.2.0",
     "mongodb": "^4.3.1",
@@ -20,6 +22,7 @@
   },
   "devDependencies": {
     "chai": "^4.3.6",
+    "express": "^4.17.2",
     "nyc": "^15.1.0"
   }
 }

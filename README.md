@@ -13,3 +13,8 @@ JkXD9bokJay5JCSYrF
 - Create a new db
 - Create an info collection in the db
 - Implement all the functions mandatory in the utils' retrieveAndAnalyzeTxs function.
+
+## Test the api
+
+- http://0.0.0.0:2727/ping
+- http://0.0.0.0:2727/getCheapestItems?bc=terra&collection=terra103z9cnqm8psy0nyxqtugg6m7xnwvlkqdzm4s4k&perPage=20&page=1
