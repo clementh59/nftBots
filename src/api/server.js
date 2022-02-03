@@ -1,6 +1,6 @@
 import {
     initConnection as initTerraConnection,
-    retrieveCheapestItems as retrieveTerraCheapestItems
+    retrieveCheapestItems as retrieveTerraCheapestItems, retrieveNumberOfItems
 } from "../terra/terraDB.js";
 
 import express from 'express';
@@ -38,9 +38,12 @@ app.get('/getCheapestItems?', async (req, res) => {
             items = await retrieveTerraCheapestItems(collection, {}, perPage, (page - 1) * perPage);
     }
 
+    let numberOfItems = await retrieveNumberOfItems(collection);
+
     res.send({
         items: items,
         contract: contract,
+        numberOfItems: numberOfItems,
     });
 });
 

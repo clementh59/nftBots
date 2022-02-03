@@ -55,6 +55,20 @@ export const retrieveCheapestItems = async (collectionKey, filter = {}, limit = 
     return _retrieveCheapestItems_(client, dbName, collectionKey, filter, limit, skip)
 }
 
+/**
+ * @param {string} collectionKey - the collection name in the mongo db
+ * @returns {Promise<int>} the number of items - 0 if it doesn't contain the number of items
+ */
+export const retrieveNumberOfItems = async (collectionKey) => {
+    const lastRank = (await _retrieveItemsSorted_(client, dbName, collectionKey, {
+        rank: {
+            $exists: true,
+            $ne: null
+        }
+    }, 1, {rank: -1}, 0));
+    return lastRank[0] ? lastRank[0].rank : 0;
+}
+
 ///////////////////            DATABASE UPDATE         ///////////////////
 
 /**

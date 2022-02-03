@@ -17,4 +17,4 @@ JkXD9bokJay5JCSYrF
 ## Test the api
 
 - http://0.0.0.0:2727/ping
-- http://0.0.0.0:2727/getCheapestItems?bc=terra&collection=terra103z9cnqm8psy0nyxqtugg6m7xnwvlkqdzm4s4k&perPage=20&page=1
+- http://0.0.0.0:2727/getCheapestItems?bc=terra&collection=galactic_punks&perPage=20&page=1
