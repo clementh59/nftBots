@@ -10,7 +10,7 @@ import {
     _addRankToItems_,
     _addUniqueIndex_,
     _createCollection_,
-    _updateItem_, _upsertItem_, _getCollectionsName_
+    _updateItem_, _upsertItem_, _getCollectionsName_, _retrieveCheapestItemsUnderRank_
 } from "../db/db.js";
 import {createRequire} from "module";
 
@@ -53,6 +53,18 @@ export const retrieveItemsSorted = async (collectionKey, filter, limit = 10, sor
  */
 export const retrieveCheapestItems = async (collectionKey, filter = {}, limit = 10, skip = 0) => {
     return _retrieveCheapestItems_(client, dbName, collectionKey, filter, limit, skip)
+}
+
+/**
+ * @param {string} collectionKey - the collection name in the mongo db
+ * @param {object} filter - e.g {token_id: "<token_id>"}
+ * @param {number} limit - the max number of item to retrieve
+ * @param {number} skip - the number of item to skip (i.e pagination)
+ * @param {number} belowRank - retrieve only items below this rank
+ * @returns {Promise<[]>}
+ */
+export const retrieveCheapestItemsUnderRank = async (collectionKey, filter = {}, limit = 10, skip = 0, belowRank) => {
+    return _retrieveCheapestItemsUnderRank_(client, dbName, collectionKey, filter, limit, skip, belowRank);
 }
 
 /**
