@@ -7,11 +7,3 @@ services:
       - /mongodata:/data/db
     ports:
       - "27017:27017"
-  randomearth:
-    build: ./src/terra/randomEarth
-    depends_on:
-      - mongodb
-    environment:
-      - WAIT_HOSTS=mongodb:27017
-    volumes:
-      - ./:/home/clement/rpiBots
