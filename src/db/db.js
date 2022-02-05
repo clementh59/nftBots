@@ -46,6 +46,25 @@ export const _retrieveCheapestItems_ = async (client, dbName, collectionKey, fil
     return client.db(dbName).collection(collectionKey).find(_filter).sort({price: 1}).skip(skip).limit(limit).toArray();
 }
 
+/**
+ * @param {MongoClient} client
+ * @param {string} dbName - the db name
+ * @param {string} collectionKey - the collection name in the mongo db
+ * @param {object} filter - e.g {token_id: "<token_id>"}
+ * @param {number} limit - the max number of item to retrieve
+ * @param {number} skip - the number of item to skip (i.e pagination)
+ * @param {number} belowRank - retrieve only items below this rank
+ * @returns {Promise<[]>}
+ */
+export const _retrieveCheapestItemsUnderRank_ = async (client, dbName, collectionKey, filter = {}, limit = 10, skip = 0, belowRank) => {
+    const _filter = {
+        price: {$exists: true, $ne: null},
+        rank: {$lt: belowRank},
+        ...filter
+    }
+    return client.db(dbName).collection(collectionKey).find(_filter).sort({price: 1}).skip(skip).limit(limit).toArray();
+}
+
 ///////////////////            DATABASE UPDATE         ///////////////////
 
 /**
