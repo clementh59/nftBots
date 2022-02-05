@@ -1,5 +1,5 @@
-import {priceInLuna, retrieveAndAnalyzeTxs} from "../utils.js";
-import {getCollectionNameWithContract, getLastTransactions} from "./terraUtils.js";
+import {priceInLuna, retrieveAndAnalyzeTxs} from "../../utils.js";
+import {getCollectionNameWithContract, getLastTransactions} from "../terraUtils";
 import {createRequire} from "module";
 import {
     closeConnection,
@@ -9,12 +9,12 @@ import {
     updateItem,
     updateItems,
     upsertItem
-} from "./terraDB.js";
-import {getLastTransactionIdAnalyzed, setLastTransactionAnalyzed} from "./infoAndStatusDB/infoAndStatusDB.js";
-import {addToLogSystem} from "../logSystem.js";
+} from "../terraDB.js";
+import {getLastTransactionIdAnalyzed, setLastTransactionAnalyzed} from "../infoAndStatusDB/infoAndStatusDB.js";
+import {addToLogSystem} from "../../logSystem.js";
 
 const require = createRequire(import.meta.url);
-export const config = require("./config.json")
+const config = require("../config.json")
 
 /**
  * Add the event to DB

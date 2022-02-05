@@ -1,11 +1,13 @@
 FROM node:12
 
-# Copy source code
-COPY . /app
+COPY . /home/clement/rpiBots
 
 # Change working directory
-WORKDIR /app
+WORKDIR /home/clement/rpiBots
 
+COPY package*.json ./
+
+RUN ls -al
 # Install dependencies
 RUN npm install
 
@@ -13,4 +15,4 @@ RUN npm install
 EXPOSE 80
 
 # Launch application
-CMD ["npm","start"]
+CMD ["node","src/terra/randomEarth/randomEarthBot.js"]

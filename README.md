@@ -3,7 +3,8 @@
 ssh pi@192.168.1.33
 scp -r ../rpiBots/ pi@192.168.1.33:/home/pi/
 scp -r ./src pi@192.168.1.33:/home/pi/rpiBots
-scp docker-compose.yml ubuntu@192.168.1.36:/home/ubuntu/bot
+scp docker-compose.yml ubuntu@192.168.1.33:/home/ubuntu/rpiBots
+scp runInLinux ubuntu@192.168.1.33:/home/ubuntu/rpiBots
 
 JkXD9bokJay5JCSYrF
 
