@@ -1,4 +1,4 @@
-import {randomEarthBot} from "./randomEarthBot.js";
+import {randomEarthBot} from "./randomEarth/randomEarthBot.js";
 import {closeConnection, initConnection, renameCollection, retrieveCheapestItems} from "./terraDB.js";
 import {closeInfoDbConnection, initInfoDbConnection} from "./infoAndStatusDB/infoAndStatusDB.js";
 import {addToLogSystem} from "../logSystem.js";

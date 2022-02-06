@@ -21,14 +21,12 @@
     {"name": "planet_of_lunapes"},
     {"name": "terrabots"},
     {"name": "galaxy_baby_ape_club"},
-
-
     {"name": "default", "buy": false}
   ],
   "mongo": {
-    "uri": "mongodb+srv://rpi:v2Mnv1ryLu2LixIk@cluster0.ajzpx.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+    "uri": "mongodb://192.168.1.29:27017",
     "dbs": {
-      "collections": "terraCollections"
+      "collections": "terra"
     }
   },
   "constants": {
