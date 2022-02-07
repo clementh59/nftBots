@@ -10,7 +10,10 @@ import {
     updateItems,
     upsertItem
 } from "../terraDB.js";
-import {getLastTransactionIdAnalyzed, setLastTransactionAnalyzed} from "../infoAndStatusDB/infoAndStatusDB.js";
+import {
+    getLastTransactionIdAnalyzedRandomEarth,
+    setLastTransactionAnalyzedRandomEarth
+} from "../infoAndStatusDB/infoAndStatusDB.js";
 import {addToLogSystem} from "../../logSystem.js";
 
 const require = createRequire(import.meta.url);
@@ -272,12 +275,12 @@ export const endOfLoopTreatment = async () => {
 }
 
 export const randomEarthBot = async () => {
-    const lastTxAnalyzed = await getLastTransactionIdAnalyzed();
+    const lastTxAnalyzed = await getLastTransactionIdAnalyzedRandomEarth();
     retrieveAndAnalyzeTxs({
         "getLastTransactions": getLastTxs,
         "analyzeTransaction": analyzeRandomEarthTransaction,
         "lastTransactionIdAnalyzed": lastTxAnalyzed,
-        "setLastTransactionAnalyzed": setLastTransactionAnalyzed,
+        "setLastTransactionAnalyzed": setLastTransactionAnalyzedRandomEarth,
         "instance": "RandomEarth",
         "timeBetweenRequests": config.timeBetweenTerraFinderRequests,
         "endOfLoopTreatment": endOfLoopTreatment,

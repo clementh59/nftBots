@@ -16,6 +16,7 @@ import {
     _updateItem_, _upsertItem_, _renameCollection_, _getCollectionsName_
 } from "../db/db.js";
 import {createRequire} from "module";
+import {closeInfoDbConnection, initInfoDbConnection} from "../terra/infoAndStatusDB/infoAndStatusDB";
 const require = createRequire(import.meta.url);
 export const config = require("../terra/config.json")
 

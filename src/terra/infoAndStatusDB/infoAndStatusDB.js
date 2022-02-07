@@ -14,6 +14,10 @@ const collectionName = 'info';
 
 let client;
 
+const fields = {
+    randomEarth: 'lastTxAnalyzedRandomEarth'
+};
+
 /**
  * Init the client and the connection with the mongodb server
  * @returns {Promise<boolean>} - true if the connection is ok - false otherwise
@@ -30,25 +34,38 @@ export const initInfoDbConnection = async () => {
  * @returns {Promise<void>}
  * @private
  */
-export const setLastTransactionAnalyzed = async (lastTxId) => {
-    return _updateItem_(client, dbName, collectionName, {}, {lastTxAnalyzed: lastTxId});
+export const setLastTransactionAnalyzedRandomEarth = async (lastTxId) => {
+    return setLastTransactionAnalyzed(lastTxId, fields.randomEarth);
 }
 
 /**
  *
  * @returns {Promise<number>}
  */
-export const getLastTransactionIdAnalyzed = async () => {
-    const items = await _retrieveItems_(client, dbName, collectionName, {}, 1);
-    return items[0].lastTxAnalyzed;
+export const getLastTransactionIdAnalyzedRandomEarth = async () => {
+    return (await getLastTransactionIdAnalyzed())[fields.randomEarth];
 }
 
 /**
- * Set up the infoDB. Needs to be called only when adding new smart contract - blockchain. Otherwise, data will be lost.
- * @returns {Promise<boolean>}
+ *
+ * @returns {Promise<number>}
  */
-export const setUpInfoDb = async () => {
-    return _addItemToCollection_(client, dbName, collectionName, {lastTxAnalyzed: 0});
+const getLastTransactionIdAnalyzed = async () => {
+    const items = await _retrieveItems_(client, dbName, collectionName, {}, 1);
+    return items[0];
+}
+
+/**
+ *
+ * @param {{number}} lastTxId
+ * @param {{string}} fieldName
+ * @returns {Promise<void>}
+ * @private
+ */
+const setLastTransactionAnalyzed = async (lastTxId, fieldName) => {
+    const values = {};
+    values[`${fieldName}`] = lastTxId;
+    return _updateItem_(client, dbName, collectionName, {}, values);
 }
 
 /**
