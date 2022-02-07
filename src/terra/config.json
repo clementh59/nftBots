@@ -10,7 +10,17 @@
     "crunks": "terra1sux7jjk9vfd0q6z0l99wpg07yd0wme0ac9le40",
     "planet_of_lunapes": "terra1x6wjugqwn2cwmjwrk603hmxwxcmk9n3uzzmhvh",
     "terrabots": "terra1hj0dga445h3faxu85gm0293608qntsj3a727ck",
-    "galaxy_baby_ape_club": "terra1598rvtgufwr7pnpqhrlajjrmvte4l8a6xkty6y"
+    "galaxy_baby_ape_club": "terra1598rvtgufwr7pnpqhrlajjrmvte4l8a6xkty6y",
+    "derby_stars": "terra1ca9peph7c20eqr9cns2vhn6sp6cp7vv4jnzjrc",
+    "baby_bulls": "terra1zvmesqul8ss2ty84eml8aqkq0kq5ydwjuyf6a3",
+    "hero": "terra1lfr4aja5a2xpxvnrl4gyjpru0wwglu7k87jmeq",
+    "levana_dragons": "terra1vhuyuwwr4rkdpez5f5lmuqavut28h5dt29rpn6",
+    "levana_dragons_eggs": "terra1k0y373yxqne22pc9g7jvnr4qclpsxtafevtrpg",
+    "levana_dragons_loot": "terra14gfnxnwl0yz6njzet4n33erq5n70wt79nm24el",
+    "luna_apes": "terra12vdepstt7f45lr8gz2flf7dnwzwlft3r22nref",
+    "styllar": "terra1934kn7p03ns94htl75zpzsg0n4yvw8yf2746ep",
+    "wagmi_monkeez": "terra1jp5fjj7rlc0erw4z3qr5zuvmg2w49pfzyhvsnk",
+    "wagmi_kongz": "terra1wcdapxh8030czdketyfemsa7lndsmpmk2e76l5"
   },
   "collectionHandled": [
     {"name": "galactic_punks"},
@@ -21,6 +31,17 @@
     {"name": "planet_of_lunapes"},
     {"name": "terrabots"},
     {"name": "galaxy_baby_ape_club"},
+    {"name": "derby_stars"},
+    {"name": "baby_bulls"},
+    {"name": "hero"},
+    {"name": "levana_dragons"},
+    {"name": "levana_dragons_eggs"},
+    {"name": "levana_dragons_loot"},
+    {"name": "luna_apes"},
+    {"name": "styllar"},
+    {"name": "wagmi_monkeez"},
+    {"name": "wagmi_kongz"},
+
     {"name": "default", "buy": false}
   ],
   "mongo": {
