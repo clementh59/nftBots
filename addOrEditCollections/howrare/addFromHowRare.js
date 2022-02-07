@@ -1,19 +1,19 @@
 import cheerio from 'cheerio';
 import got from 'got';
-import {writeJSONToFile} from "../../../utils.js";
+import {writeJSONToFile} from "../../src/utils.js";
 import {createRequire} from "module";
 
 const require = createRequire(import.meta.url);
 const json = {items: []};
 
-const collectionName = 'derbystars';
-const collectionNameInHowRareUrl = 'derbystars';
-const number = 3997;
+const collectionName = 'styllar';
+const collectionNameInHowRareUrl = 'styllar';
+const number = 10050;
 
 const isNftImage = (i, link) => {
     return link.attribs.src.startsWith('https://cloudflare-ipfs.com/')
-        //|| link.attribs.src.startsWith('https://d75aawrtvbfp1.cloudfront.net/')
-        || link.attribs.src.startsWith('https://dy7lm72krmydr.cloudfront.net/');
+        || link.attribs.src.startsWith('https://d75aawrtvbfp1.cloudfront.net/')
+        //|| link.attribs.src.startsWith('https://dy7lm72krmydr.cloudfront.net/');
 };
 
 const isRELink = (i, link) => {
@@ -76,9 +76,12 @@ const getItem = async (number) => {
         json.items.push(item);
         return item;
     } catch (e) {
-        // console.log(number);
+        console.log(e)
+        console.log(number);
     }
 }
+
+let step = 20;
 
 (async () => {
     let itemsAlreadyAdded = [];
@@ -87,19 +90,23 @@ const getItem = async (number) => {
         itemsAlreadyAdded = collectionJSON.items;
     } catch (e) {}
     json.items.push(...itemsAlreadyAdded);
-    for (let j = 1; j <= number; j+=200) {
+    /*for (let j = 1; j <= number; j+=step) {
         let promises = [];
-        for (let i = j; i <= j+199; i++) {
+        for (let i = j; i < j+step; i++) {
             if (!json.items.find(s => s.name.endsWith(`#${i}`)))
                 promises.push(getItem(i));
         }
         await Promise.all(promises);
         writeJSONToFile(collectionName+'.json', json);
         console.log("new milestone: "+(j+199));
+    }*/
+    for (let i = 0; i <= number; i++) {
+        if (!json.items.find(s => s.name.endsWith(`#${i}`))) {
+            await getItem(i);
+            writeJSONToFile(collectionName + '.json', json);
+            console.log(i);
+        }
     }
     console.log('numberOfItems: ' + json.items.length);
     writeJSONToFile(collectionName+'.json', json);
 })();
-/*(async () => {
-    console.log(await getItem(11));
-})();*/
