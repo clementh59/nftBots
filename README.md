@@ -14,6 +14,7 @@ JkXD9bokJay5JCSYrF
 - Create a new db
 - Create an info collection in the db
 - Implement all the functions mandatory in the utils' retrieveAndAnalyzeTxs function.
+- In the infoAndStatusDB, add all the mandatory functions
 
 ## Test the api
 
