@@ -15,6 +15,7 @@ import {
     setLastTransactionAnalyzedRandomEarth
 } from "../infoAndStatusDB/infoAndStatusDB.js";
 import {addToLogSystem} from "../../logSystem.js";
+import {analyzeSales} from "../../algorithm/analysisAlgorithm.js";
 
 const require = createRequire(import.meta.url);
 const config = require("../config.json")
@@ -126,6 +127,8 @@ const newSale = async (tx, msg, makerAsset, takerAsset, order) => {
     return info;
 }
 
+let contractsUpdated = [];
+
 const analyzeRandomEarthOrder = async (tx, key, order, msg) => {
     let makerAsset, takerAsset, nft;
     let str = '';
@@ -148,6 +151,7 @@ const analyzeRandomEarthOrder = async (tx, key, order, msg) => {
                 return;
             nft = makerAsset.info.nft;
             await addToDB(info, nft.contract_addr);
+            contractsUpdated.push(nft.contract_addr);
             break;
         case 'withdraw':
             break;
@@ -271,7 +275,8 @@ const getLastTxs = async (offset) => {
  */
 export const endOfLoopTreatment = async () => {
     await removeRandomEarthExpiredSales();
-    //await analyzeSales();
+    await analyzeSales(contractsUpdated);
+    contractsUpdated = [];
 }
 
 export const randomEarthBot = async () => {

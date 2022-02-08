@@ -1,5 +1,5 @@
 {
-  "timeBetweenTerraFinderRequests": 1500,
+  "timeBetweenTerraFinderRequests": 3000,
   "contracts": {
     "randomEarth": "terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t",
     "galactic_punks": "terra103z9cnqm8psy0nyxqtugg6m7xnwvlkqdzm4s4k",
@@ -23,27 +23,41 @@
     "wagmi_kongz": "terra1wcdapxh8030czdketyfemsa7lndsmpmk2e76l5"
   },
   "collectionHandled": [
-    {"name": "galactic_punks"},
-    {"name": "luna_bulls"},
-    {"name": "terrapins"},
-    {"name": "spaceToadz"},
-    {"name": "crunks"},
-    {"name": "planet_of_lunapes"},
-    {"name": "terrabots"},
-    {"name": "galaxy_baby_ape_club"},
-    {"name": "derby_stars"},
-    {"name": "baby_bulls"},
-    {"name": "hero"},
-    {"name": "levana_dragons"},
-    {"name": "levana_dragons_eggs"},
-    {"name": "levana_dragons_loot"},
-    {"name": "luna_apes"},
-    {"name": "styllar"},
-    {"name": "wagmi_monkeez"},
-    {"name": "wagmi_kongz"},
+    {"name": "galactic_punks", "triggerFactor": 5, "rarityFactor": 4},
+    {"name": "luna_bulls", "triggerFactor": 5, "rarityFactor": 4},
+    {"name": "terrapins", "triggerFactor": 4, "rarityFactor": 4},
+    {"name": "spaceToadz", "triggerFactor": 4, "rarityFactor": 2},
+    {"name": "crunks", "triggerFactor": 1, "rarityFactor": 2},
+    {"name": "planet_of_lunapes", "triggerFactor": 1, "rarityFactor": 1},
+    {"name": "terrabots", "triggerFactor": 2, "rarityFactor": 1},
+    {"name": "galaxy_baby_ape_club", "triggerFactor": 3, "rarityFactor": 1},
+    {"name": "derby_stars", "triggerFactor": 4, "rarityFactor": 2},
+    {"name": "baby_bulls", "triggerFactor": 4, "rarityFactor": 4},
+    {"name": "hero", "triggerFactor": 3, "rarityFactor": 1},
+    {"name": "levana_dragons", "triggerFactor": 4, "rarityFactor": 1},
+    {"name": "levana_dragons_eggs", "triggerFactor": 4, "rarityFactor": 1},
+    {"name": "levana_dragons_loot", "triggerFactor": 4, "rarityFactor": 1},
+    {"name": "luna_apes", "triggerFactor": 2, "rarityFactor": 1},
+    {"name": "styllar", "triggerFactor": 4, "rarityFactor": 3},
+    {"name": "wagmi_monkeez", "triggerFactor": 2, "rarityFactor": 1},
+    {"name": "wagmi_kongz", "triggerFactor": 4, "rarityFactor": 1},
 
     {"name": "default", "buy": false}
   ],
+  "triggerScale": {
+    "1": "0.1",
+    "2": "0.4",
+    "3": "0.6",
+    "4": "0.75",
+    "5": "0.85"
+  },
+  "rarityScale": {
+    "1": "2.5",
+    "2": "5",
+    "3": "10",
+    "4": "25",
+    "5": "40"
+  },
   "mongo": {
     "uri": "mongodb://192.168.1.29:27017",
     "dbs": {
