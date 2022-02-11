@@ -1,5 +1,5 @@
 {
-  "timeBetweenTerraFinderRequests": 3000,
+  "timeBetweenTerraFinderRequests": 500,
   "contracts": {
     "randomEarth": "terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t",
     "galactic_punks": "terra103z9cnqm8psy0nyxqtugg6m7xnwvlkqdzm4s4k",

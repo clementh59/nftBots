@@ -1,7 +1,8 @@
 import {sendMail} from "../utils.js";
-import {getCollectionConfigFromContract} from "../terra/terraUtils.js";
+import {getCollectionConfigFromContract, getCollectionNameWithContract} from "../terra/terraUtils.js";
 import {retrieveCheapestItems, retrieveCheapestItemsUnderRank, retrieveNumberOfItems} from "../terra/terraDB.js";
 import {createRequire} from "module";
+import {addToLogSystem} from "../logSystem.js";
 
 const require = createRequire(import.meta.url);
 const config = require("../terra/config.json");
@@ -46,9 +47,11 @@ const rareItemPriceIsTooLow = (priceOfRareItem, floor, iteration) => {
  */
 export const analyzeSales = async (collections) => {
     const promises = [];
-    for (let key in collections) {
-        const config = getCollectionConfigFromContract(key);
-        promises.push(analyzeCollection(key, config));
+    collections = [...new Set(collections)];
+    console.log(collections)
+    for (let i = 0; i < collections.length; i++) {
+        const config = getCollectionConfigFromContract(collections[i]);
+        promises.push(analyzeCollection(collections[i], config));
     }
     await Promise.all(promises);
 }
@@ -61,13 +64,17 @@ export const analyzeSales = async (collections) => {
 export const analyzeCollection = async (contract, collectionConfig) => {
 
     let res = [];
+    let collectionName = getCollectionNameWithContract(contract);
+
+    console.log(collectionName);
+    console.log(collectionConfig);
 
     try {
 
         if (collectionConfig.buy === false)
             return [ANALYSIS_CODES.CONFIG_SET_TO_NOT_BUY];
 
-        const cheapestItems = await retrieveCheapestItems(contract, {}, 60, 0);
+        const cheapestItems = await retrieveCheapestItems(collectionName, {}, 60, 0);
 
         if (cheapestItems.length < 50)
             // we need at least this amount of item of that collection to estimate we can trust the market price
@@ -80,17 +87,19 @@ export const analyzeCollection = async (contract, collectionConfig) => {
         if (cheapestItems[0].price <= cheapestItems[1].price * triggerFactor) {
             await buy(contract, cheapestItems[0], `Buying ${cheapestItems[0].name} at ${cheapestItems[0].price} because floor is ${cheapestItems[1].price}`);
             res.push(cheapestItems[0]);
+        } else {
+            addToLogSystem(`${collectionName} - No (1) - ${cheapestItems[0].price} > ${cheapestItems[1].price * triggerFactor}`);
         }
 
         // step 2 - check if a rare item is close to the floor
         if (collectionConfig.rarityFactor) {
             const floor = cheapestItems[0].price;
-            const numberOfItems = await retrieveNumberOfItems(contract);
+            const numberOfItems = await retrieveNumberOfItems(collectionName);
 
             for (let i = 0; i < parseInt(collectionConfig.rarityFactor); i++) {
                 const rarityFactor = config.rarityScale[parseInt(collectionConfig.rarityFactor)-i];
                 const belowRank = numberOfItems * rarityFactor / 100;
-                const rareItems = await retrieveCheapestItemsUnderRank(contract, {}, 1, 0, belowRank);
+                const rareItems = await retrieveCheapestItemsUnderRank(collectionName, {}, 1, 0, belowRank);
                 if (rareItems.length > 0 && rareItemPriceIsTooLow(rareItems[0].price, floor, i)) {
                     await buy(contract, rareItems[0], `Buying ${rareItems[0].name} at ${rareItems[0].price} because floor is ${floor} and rarity is ${rareItems[0].rank*100/numberOfItems}%`);
                     res.push(rareItems[0]);
@@ -115,8 +124,11 @@ export const analyzeCollection = async (contract, collectionConfig) => {
  * @param msg - the object of the mail that will be sent
  */
 const buy = async (collection, item, msg) => {
+    console.log('enter buy');
+    addToLogSystem('enter buy for: ' + item.toString());
     if (!itemBought.includes(collection + item.token_id + item.price)) {
         console.log(msg);
+        addToLogSystem(msg);
         itemBought.push(collection + item.token_id + item.price);
         /*if (item.hasOwnProperty('msg')) {
             const res = await buyRandomEarth(item.msg, item.price);
