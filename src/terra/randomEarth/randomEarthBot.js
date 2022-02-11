@@ -14,8 +14,16 @@ import {addToLogSystem} from "../../logSystem.js";
 import {analyzeSales} from "../../algorithm/analysisAlgorithm.js";
 
 const require = createRequire(import.meta.url);
-const config = require("../config.json")
+const config = require("../config.json");
 
+let contractsUpdated = []; // to know which collections have been updated before an analysis so that we don't have to
+// analyze all collections
+
+//region auto-buy features
+
+//endregion
+
+//region db
 /**
  * Add the event to DB
  * @param {{}} info
@@ -74,7 +82,9 @@ const removeRandomEarthExpiredSales = async () => {
         }, {marketplace: "", price: "", status: ""});
     }
 }
+//endregion db
 
+//region tx analysis
 /**
  * Get the price in luna from the taker asset info
  * @param takerAsset
@@ -122,8 +132,6 @@ const newSale = async (tx, msg, makerAsset, takerAsset, order) => {
     info.expiration = order.expiration;
     return info;
 }
-
-let contractsUpdated = [];
 
 const analyzeRandomEarthOrder = async (tx, key, order, msg) => {
     let makerAsset, takerAsset, nft;
@@ -218,7 +226,7 @@ const tryAnalyzingTxSolution2 = async (tx, msg) => {
                     let decoded = buff.toString('ascii');
                     const r = JSON.parse(decoded);
                     for (key in r) {
-                        await analyzeRandomEarthOrder(tx, key, r[key].order.order, msg, true)
+                        await analyzeRandomEarthOrder(tx, key, r[key].order.order, msg)
                     }
                     break;
                 default:
@@ -260,6 +268,7 @@ export const analyzeRandomEarthTransaction = async (tx) => {
         }
     }));
 }
+//endregion
 
 const getLastTxs = async (offset) => {
     return getLastTransactions(config.contracts.randomEarth, offset, offset ? 100 : 10)
