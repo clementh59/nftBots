@@ -20,7 +20,125 @@ let contractsUpdated = []; // to know which collections have been updated before
 // analyze all collections
 
 //region auto-buy features
+/**
+ *
+ * @param {{}} msg - the msg contained in the tx that listed the item. e.g:
+ * {
+    "type": "wasm/MsgExecuteContract",
+    "value": {
+        "coins": [],
+        "sender": "terra19umuhxv5nlw70rsfq2434p6k3t5t334e28aszt",
+        "contract": "terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t",
+        "execute_msg": {"ledger_proxy": {"msg": "{\"post_order\":{\"order\":{\"order\":{\"listing\":0,\"maker\":[116,101,114,114,97,49,57,117,109,117,104,120,118,53,110,108,119,55,48,114,115,102,113,50,52,51,52,112,54,107,51,116,53,116,51,51,52,101,50,56,97,115,122,116],\"maker_fee\":\"0\",\"taker_fee\":\"0\",\"version\":\"terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t\",\"taker\":\"terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t\",\"maker_asset\":{\"info\":{\"nft\":{\"contract_addr\":\"terra103z9cnqm8psy0nyxqtugg6m7xnwvlkqdzm4s4k\",\"token_id\":\"186342927313358016758879959494165278263\"}},\"amount\":\"1\"},\"taker_asset\":{\"info\":{\"native_token\":{\"denom\":\"uluna\"}},\"amount\":\"95000000\"},\"fee_recipient\":\"accepting_counters\",\"nonce\":77076119,\"expiration\":1643010523},\"sig\":[]}}}"}}
+    }
+  }
+ * @returns {{}} the execute order. e.g:
+ * {"ledger_proxy":{"msg":{"execute_order":{"order":{"order":{"listing":0,"maker":[116,101,114,114,97,49,57,117,109,117,104,120,118,53,110,108,119,55,48,114,115,102,113,50,52,51,52,112,54,107,51,116,53,116,51,51,52,101,50,56,97,115,122,116],"maker_fee":"0","taker_fee":"0","version":"terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t","taker":"terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t","maker_asset":{"info":{"nft":{"contract_addr":"terra103z9cnqm8psy0nyxqtugg6m7xnwvlkqdzm4s4k","token_id":"186342927313358016758879959494165278263"}},"amount":"1"},"taker_asset":{"info":{"native_token":{"denom":"uluna"}},"amount":"95000000"},"expiration":1643010523,"fee_recipient":"accepting_counters","nonce":77076119},"sig":[]}}}}}
+ */
+export const generateBuyOrderRandomEarth = (msg) => {
+    try {
+        return generateBuyOrderFromPostOrder(msg);
+    } catch (e) {
+        return generateBuyOrderFromSendNFT(msg);
+    }
+}
 
+const executeOrderSkeleton = {
+    "ledger_proxy": {
+        "msg": {
+            "execute_order": {
+                "order": {
+                    "order": {
+                        "listing": null,
+                        "maker": null,
+                        "maker_fee": null,
+                        "taker_fee": null,
+                        "version": null,
+                        "taker": null,
+                        "maker_asset": null,
+                        "taker_asset": null,
+                        "expiration": null,
+                        "fee_recipient": null,
+                        "nonce": null
+                    },
+                    "sig": null
+                }
+            }
+        }
+    }
+}
+
+/**
+ *
+ * @param {{}} postOrder - the post order of the item. e.g:
+ * {
+    "type": "wasm/MsgExecuteContract",
+    "value": {
+        "coins": [],
+        "sender": "terra19umuhxv5nlw70rsfq2434p6k3t5t334e28aszt",
+        "contract": "terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t",
+        "execute_msg": {"ledger_proxy": {"msg": "{\"post_order\":{\"order\":{\"order\":{\"listing\":0,\"maker\":[116,101,114,114,97,49,57,117,109,117,104,120,118,53,110,108,119,55,48,114,115,102,113,50,52,51,52,112,54,107,51,116,53,116,51,51,52,101,50,56,97,115,122,116],\"maker_fee\":\"0\",\"taker_fee\":\"0\",\"version\":\"terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t\",\"taker\":\"terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t\",\"maker_asset\":{\"info\":{\"nft\":{\"contract_addr\":\"terra103z9cnqm8psy0nyxqtugg6m7xnwvlkqdzm4s4k\",\"token_id\":\"186342927313358016758879959494165278263\"}},\"amount\":\"1\"},\"taker_asset\":{\"info\":{\"native_token\":{\"denom\":\"uluna\"}},\"amount\":\"95000000\"},\"fee_recipient\":\"accepting_counters\",\"nonce\":77076119,\"expiration\":1643010523},\"sig\":[]}}}"}}
+    }
+  }
+ * @returns {{}} the execute order. e.g:
+ * {"ledger_proxy":{"msg":{"execute_order":{"order":{"order":{"listing":0,"maker":[116,101,114,114,97,49,57,117,109,117,104,120,118,53,110,108,119,55,48,114,115,102,113,50,52,51,52,112,54,107,51,116,53,116,51,51,52,101,50,56,97,115,122,116],"maker_fee":"0","taker_fee":"0","version":"terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t","taker":"terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t","maker_asset":{"info":{"nft":{"contract_addr":"terra103z9cnqm8psy0nyxqtugg6m7xnwvlkqdzm4s4k","token_id":"186342927313358016758879959494165278263"}},"amount":"1"},"taker_asset":{"info":{"native_token":{"denom":"uluna"}},"amount":"95000000"},"expiration":1643010523,"fee_recipient":"accepting_counters","nonce":77076119},"sig":[]}}}}}
+ */
+const generateBuyOrderFromPostOrder = (postOrder) => {
+    let order = JSON.parse(JSON.stringify(executeOrderSkeleton)); // to use a copy of the skeleton
+    const msg = order.ledger_proxy.msg.execute_order.order;
+    const postOrderMsg = JSON.parse(postOrder.value.execute_msg.ledger_proxy.msg).post_order.order;
+
+    msg.sig = postOrderMsg.sig;
+    msg.order.listing = postOrderMsg.order.listing;
+    msg.order.maker = postOrderMsg.order.maker;
+    msg.order.maker_fee = postOrderMsg.order.maker_fee;
+    msg.order.taker = postOrderMsg.order.taker;
+    msg.order.taker_fee = postOrderMsg.order.taker_fee;
+    msg.order.version = postOrderMsg.order.version;
+    msg.order.maker_asset = postOrderMsg.order.maker_asset;
+    msg.order.taker_asset = postOrderMsg.order.taker_asset;
+    msg.order.expiration = postOrderMsg.order.expiration;
+    msg.order.fee_recipient = postOrderMsg.order.fee_recipient;
+    msg.order.nonce = postOrderMsg.order.nonce;
+
+    order.ledger_proxy.msg = JSON.stringify(order.ledger_proxy.msg);
+
+    return order;
+}
+
+/**
+ *
+ * @param {{}} _msg - the post order of the item. e.g:
+ * {
+    "type": "wasm/MsgExecuteContract",
+    "value": {
+        "coins": [],
+        "sender": "terra19umuhxv5nlw70rsfq2434p6k3t5t334e28aszt",
+        "contract": "terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t",
+        "execute_msg": "send_nft": {
+                "msg": "eyJwb3N0X29yZGVyIjp7Im9yZGVyIjp7Im9yZGVyIjp7Imxpc3RpbmciOjAsIm1ha2VyIjpbMTE2LDEwMSwxMTQsMTE0LDk3LDQ5LDEwNiwxMDYsMTA4LDExOSw1NSwxMTcsMTEyLDU2LDU0LDExMiwxMDYsMTE1LDExMCw1MiwxMTcsNTYsMTAyLDQ4LDEwMCwxMDQsMTIwLDEwOCw5Nyw1MywxMDEsMTAxLDEyMCwxMTcsMTIwLDQ4LDUwLDExOSw5OSw1MywxMTIsNTIsMTE2LDExOF0sIm1ha2VyX2ZlZSI6IjAiLCJ0YWtlcl9mZWUiOiIwIiwidmVyc2lvbiI6InRlcnJhMWVlazB5bW1oeXpqYTYwODMweGh6bTdrN2prcms5OWE2MHEyejJ0IiwidGFrZXIiOiJ0ZXJyYTFlZWsweW1taHl6amE2MDgzMHhoem03azdqa3JrOTlhNjBxMnoydCIsIm1ha2VyX2Fzc2V0Ijp7ImluZm8iOnsibmZ0Ijp7ImNvbnRyYWN0X2FkZHIiOiJ0ZXJyYTE2cnNzbmU4N2NrNnJzc2hnOThxcWo0eWxmdW00NmF4cDBrcGF6aiIsInRva2VuX2lkIjoiMzI0NzM5MzAyMTM3ODgwNTk4NDQzNjI3NzU2Njg1NTQ4MzMwNjYxIn19LCJhbW91bnQiOiIxIn0sInRha2VyX2Fzc2V0Ijp7ImluZm8iOnsibmF0aXZlX3Rva2VuIjp7ImRlbm9tIjoidWx1bmEifX0sImFtb3VudCI6IjM5MDAwMCJ9LCJmZWVfcmVjaXBpZW50IjoiYWNjZXB0aW5nX2NvdW50ZXJzIiwibm9uY2UiOjU0MDgzMDQ4LCJleHBpcmF0aW9uIjoxNjQ0Njg1MTE1fSwic2lnIjpbXX19fQ==",
+                "contract": "terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t",
+                "token_id": "324739302137880598443627756685548330661"
+            }
+    }
+  }
+ * @returns {{}} the execute order. e.g:
+ * {"ledger_proxy":{"msg":{"execute_order":{"order":{"order":{"listing":0,"maker":[116,101,114,114,97,49,57,117,109,117,104,120,118,53,110,108,119,55,48,114,115,102,113,50,52,51,52,112,54,107,51,116,53,116,51,51,52,101,50,56,97,115,122,116],"maker_fee":"0","taker_fee":"0","version":"terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t","taker":"terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t","maker_asset":{"info":{"nft":{"contract_addr":"terra103z9cnqm8psy0nyxqtugg6m7xnwvlkqdzm4s4k","token_id":"186342927313358016758879959494165278263"}},"amount":"1"},"taker_asset":{"info":{"native_token":{"denom":"uluna"}},"amount":"95000000"},"expiration":1643010523,"fee_recipient":"accepting_counters","nonce":77076119},"sig":[]}}}}}
+ */
+const generateBuyOrderFromSendNFT = (_msg) => {
+    const sendNftMsg = _msg.value.execute_msg.send_nft;
+    let buff = new Buffer.from(sendNftMsg.msg, 'base64');
+    let base64Parsed = buff.toString('ascii');
+    return generateBuyOrderFromPostOrder({
+        value: {
+            execute_msg: {
+                ledger_proxy: {
+                    msg: base64Parsed
+                }
+            }
+        }
+    });
+}
 //endregion
 
 //region db
