@@ -2,11 +2,7 @@ import {priceInLuna, retrieveAndAnalyzeTxs} from "../../utils.js";
 import {getCollectionNameWithContract, getLastTransactions} from "../terraUtils.js";
 import {createRequire} from "module";
 import {
-    closeConnection,
     getCollectionsName,
-    initConnection,
-    retrieveItems,
-    updateItem,
     updateItems,
     upsertItem
 } from "../terraDB.js";
