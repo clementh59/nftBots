@@ -20,11 +20,18 @@
     "luna_apes": "terra12vdepstt7f45lr8gz2flf7dnwzwlft3r22nref",
     "styllar": "terra1934kn7p03ns94htl75zpzsg0n4yvw8yf2746ep",
     "wagmi_monkeez": "terra1jp5fjj7rlc0erw4z3qr5zuvmg2w49pfzyhvsnk",
-    "wagmi_kongz": "terra1wcdapxh8030czdketyfemsa7lndsmpmk2e76l5"
+    "wagmi_kongz": "terra1wcdapxh8030czdketyfemsa7lndsmpmk2e76l5",
+    "women_vs_apes": "terra139pqfy6armpauyqqhev7tdncs64gs26frj92y3",
+    "tales_of_terra": "terra19auzecsexkyzekcg5r6gvrlm4df3cardccc70w",
+    "terrapin_egg": "terra1y4shq4q8t4d98njay3dwc7ww5v2kg08sytyl3n",
+    "deviant": "terra1tv5hu9d2hw4q9tn4x30870ae0e4mrttqj0fcv6",
+    "poppin_puffin": "terra1h6msx3t0qj7fuhssyqc44g20qwwyz35zqel96l",
+    "luna_bulls_3D": "terra18d5cqlsqgxp8w7ysn48l4r8a5328592wfwjtyz"
   },
   "collectionHandled": [
     {"name": "galactic_punks", "triggerFactor": 5, "rarityFactor": 4},
     {"name": "luna_bulls", "triggerFactor": 5, "rarityFactor": 4},
+    {"name": "luna_bulls_3D", "triggerFactor": 5},
     {"name": "terrapins", "triggerFactor": 4, "rarityFactor": 4},
     {"name": "spaceToadz", "triggerFactor": 4, "rarityFactor": 2},
     {"name": "crunks", "triggerFactor": 1, "rarityFactor": 2},
@@ -41,6 +48,11 @@
     {"name": "styllar", "triggerFactor": 4, "rarityFactor": 3},
     {"name": "wagmi_monkeez", "triggerFactor": 2, "rarityFactor": 1},
     {"name": "wagmi_kongz", "triggerFactor": 4, "rarityFactor": 1},
+    {"name": "women_vs_apes", "buy":  false},
+    {"name": "tales_of_terra", "buy":  false},
+    {"name": "terrapin_egg", "triggerFactor": 3},
+    {"name": "deviant", "triggerFactor": 3},
+    {"name": "poppin_puffin", "triggerFactor": 3},
 
     {"name": "default", "buy": false}
   ],
@@ -52,6 +64,7 @@
     "5": "0.85"
   },
   "rarityScale": {
+    "0": "0",
     "1": "2.5",
     "2": "5",
     "3": "10",

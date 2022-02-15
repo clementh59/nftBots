@@ -10,18 +10,18 @@ const newCollectionName = 'styllar';
 // end variables
 
 (async () => {
-    console.log(json.items.find(i => i.token_id === '7781'));
-    console.log(json.items.length);
+    /*console.log(json.items.find(i => i.token_id === '7781'));
+    console.log(json.items.length);*/
 
 
-    /*await initConnection();
-    const promises = [];
+    await initConnection();
+    /*const promises = [];
     for (let i = 0; i < json.items.length; i++) {
         json.items[i].rank = parseInt(json.items[i].rank);
         promises.push(upsertItem(contract, {token_id: json.items[i].token_id}, json.items[i]));
     }
     await Promise.all(promises);
-    await renameCollection(contract, newCollectionName);
+    await renameCollection(contract, newCollectionName);*/
     await closeConnection();
-    process.exit(0);*/
+    process.exit(0);
 })();

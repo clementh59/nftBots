@@ -66,8 +66,6 @@ export const analyzeCollection = async (contract, collectionConfig) => {
     let res = [];
     let collectionName = getCollectionNameWithContract(contract);
 
-    console.log(collectionName);
-    console.log(collectionConfig);
 
     try {
 
@@ -92,7 +90,7 @@ export const analyzeCollection = async (contract, collectionConfig) => {
         }
 
         // step 2 - check if a rare item is close to the floor
-        if (collectionConfig.rarityFactor) {
+        if (collectionConfig.rarityFactor && parseInt(collectionConfig.rarityFactor) !== 0) {
             const floor = cheapestItems[0].price;
             const numberOfItems = await retrieveNumberOfItems(collectionName);
 
@@ -106,6 +104,7 @@ export const analyzeCollection = async (contract, collectionConfig) => {
                 }
             }
         }
+
     } catch (e) {
         console.log(e);
         // todo: push errors somewhere
@@ -130,17 +129,6 @@ const buy = async (collection, item, msg) => {
         console.log(msg);
         addToLogSystem(msg);
         itemBought.push(collection + item.token_id + item.price);
-        /*if (item.hasOwnProperty('msg')) {
-            const res = await buyRandomEarth(item.msg, item.price);
-            if (!res) {
-                randomEarthBuyWithUI(item.link, terraPwd);
-            }
-        } else {
-            randomEarthBuyWithUI(item.link, terraPwd);
-        }*/
-
-        //playMusic();
-
-        //sendMail(text, collection + ' - ' + item.price);
+        sendMail(msg, 'THIS IS FROM TEST BOT - ' + collection + ' - ' + item.price);
     }
 }

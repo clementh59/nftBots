@@ -93,6 +93,11 @@ describe('Analysis', () => {
         expect(result[0].token_id).to.be.equal(6);
     });
 
+    it("should not buy since rarityFactor is set to 0", async () => {
+        const result = await analyzeCollection(collectionKey, {name: collectionKey, triggerFactor: '3', rarityFactor: '0'});
+        expect(result[0]).to.be.equal(ANALYSIS_CODES.NOT_BUYING);
+    });
+
     /*it("should buy since a rare attribute is below the wanted price", async () => {
         const result = await analyzeCollection(collectionKey, {name: collectionKey, triggerFactor: '3', rarityFactor: '4'});
         expect(result[0].token_id).to.be.equal(6);
