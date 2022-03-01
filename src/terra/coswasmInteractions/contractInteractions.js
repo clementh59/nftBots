@@ -1,7 +1,13 @@
 import {LCDClient, MnemonicKey, MsgExecuteContract} from '@terra-money/terra.js';
 import {text} from "./coswasmConstants.js";
-import {addToTransactionErrorHistory, addToTransactionHistory} from "../../logSystem.js";
+import {addToLogSystem, addToTransactionErrorHistory, addToTransactionHistory} from "../../logSystem.js";
 
+/**
+ *
+ * @param {string} contractAddress
+ * @param {object} msg
+ * @returns {Promise<boolean>}
+ */
 export const interactWithContract = async (contractAddress, msg) => {
 
     try {
@@ -17,6 +23,9 @@ export const interactWithContract = async (contractAddress, msg) => {
             URL: 'https://lcd.terra.dev',
             chainID: 'columbus-5',
         });
+
+        addToLogSystem(msg);
+        addToLogSystem(contractAddress);
 
         const wallet = terra.wallet(mk);
 
@@ -37,10 +46,10 @@ export const interactWithContract = async (contractAddress, msg) => {
         }
         return true;
     } catch (e) {
-        console.log(e.response.data.message);
+        console.log(e.response);
+        await addToTransactionErrorHistory(e.response)
+        await addToTransactionErrorHistory(JSON.stringify(e.response))
         await addToTransactionErrorHistory(JSON.stringify(e.response.data.message));
         return false;
     }
 }
-
-interactWithContract();

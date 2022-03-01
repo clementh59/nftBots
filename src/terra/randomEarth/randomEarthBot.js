@@ -12,6 +12,7 @@ import {
 } from "../infoAndStatusDB/infoAndStatusDB.js";
 import {addToLogSystem} from "../../logSystem.js";
 import {analyzeSales} from "../../algorithm/analysisAlgorithm.js";
+import {interactWithContract} from "../coswasmInteractions/contractInteractions.js";
 
 const require = createRequire(import.meta.url);
 const config = require("../config.json");
@@ -20,6 +21,12 @@ let contractsUpdated = []; // to know which collections have been updated before
 // analyze all collections
 
 //region auto-buy features
+export const autoBuyItemRandomEarth = async (postOrderMessage) => {
+    const executeOrder = generateBuyOrderRandomEarth(postOrderMessage);
+    console.log(executeOrder);
+    return await interactWithContract(config.contracts.randomEarth, executeOrder);
+}
+
 /**
  *
  * @param {{}} msg - the msg contained in the tx that listed the item. e.g:
@@ -39,6 +46,7 @@ export const generateBuyOrderRandomEarth = (msg) => {
     try {
         return generateBuyOrderFromPostOrder(msg);
     } catch (e) {
+        console.log(e);
         return generateBuyOrderFromSendNFT(msg);
     }
 }

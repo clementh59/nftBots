@@ -3,6 +3,7 @@ import {getCollectionConfigFromContract, getCollectionNameWithContract} from "..
 import {retrieveCheapestItems, retrieveCheapestItemsUnderRank, retrieveNumberOfItems} from "../terra/terraDB.js";
 import {createRequire} from "module";
 import {addToLogSystem} from "../logSystem.js";
+import {autoBuyItemRandomEarth} from "../terra/randomEarth/randomEarthBot.js";
 
 const require = createRequire(import.meta.url);
 const config = require("../terra/config.json");
@@ -83,7 +84,7 @@ export const analyzeCollection = async (contract, collectionConfig) => {
 
         // step 1 - check if a very cheap item has been listed
         if (cheapestItems[0].price <= cheapestItems[1].price * triggerFactor) {
-            await buy(contract, cheapestItems[0], `Buying ${cheapestItems[0].name} at ${cheapestItems[0].price} because floor is ${cheapestItems[1].price}`);
+            await buy(contract, cheapestItems[0], `Buying ${cheapestItems[0].name ? cheapestItems[0].name : collectionName} at ${cheapestItems[0].price} because floor is ${cheapestItems[1].price}`);
             res.push(cheapestItems[0]);
         } else {
             addToLogSystem(`${collectionName} - No (1) - ${cheapestItems[0].price} > ${cheapestItems[1].price * triggerFactor}`);
@@ -99,7 +100,7 @@ export const analyzeCollection = async (contract, collectionConfig) => {
                 const belowRank = numberOfItems * rarityFactor / 100;
                 const rareItems = await retrieveCheapestItemsUnderRank(collectionName, {}, 1, 0, belowRank);
                 if (rareItems.length > 0 && rareItemPriceIsTooLow(rareItems[0].price, floor, i)) {
-                    await buy(contract, rareItems[0], `Buying ${rareItems[0].name} at ${rareItems[0].price} because floor is ${floor} and rarity is ${rareItems[0].rank*100/numberOfItems}%`);
+                    await buy(contract, rareItems[0], `Buying ${rareItems[0].name ? rareItems[0].name : collectionName} at ${rareItems[0].price} because floor is ${floor} and rarity is ${rareItems[0].rank*100/numberOfItems}%`);
                     res.push(rareItems[0]);
                 }
             }
@@ -118,17 +119,26 @@ export const analyzeCollection = async (contract, collectionConfig) => {
 
 /**
  * Auto buy an item and send a mail to alert me
- * @param {string} collection - coll address
+ * @param {string} contract - coll address
  * @param {{}} item
  * @param msg - the object of the mail that will be sent
  */
-const buy = async (collection, item, msg) => {
-    console.log('enter buy');
-    addToLogSystem('enter buy for: ' + item.toString());
-    if (!itemBought.includes(collection + item.token_id + item.price)) {
+const buy = async ( contract, item, msg) => {
+
+    const isAMochaTest = typeof global.it === 'function';
+
+    addToLogSystem('enter buy');
+
+    if (isAMochaTest)
+      return;
+
+    if (!itemBought.includes(contract + item.token_id + item.price)) {
         console.log(msg);
         addToLogSystem(msg);
-        itemBought.push(collection + item.token_id + item.price);
-        sendMail(msg, 'THIS IS FROM TEST BOT - ' + collection + ' - ' + item.price);
+        itemBought.push(contract + item.token_id + item.price);
+        if (item.hasOwnProperty('status')) {
+            sendMail(msg, contract + ' - ' + item.price);
+            await autoBuyItemRandomEarth(item.status.msg);
+        }
     }
 }
