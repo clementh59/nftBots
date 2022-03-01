@@ -22,12 +22,12 @@ const contract = 'terra1234567890';
 
 describe('Analysis', () => {
 
-    const item1 = {token_id: 1, price: 0.9, rank: 499};
-    const item2 = {token_id: 2, price: 1.4, rank: 299};
-    const item3 = {token_id: 3, price: 1.7, rank: 99};
-    const item4 = {token_id: 4, price: 1.9, rank: 99};
-    const item5 = {token_id: 5, price: 1.7, rank: 50};
-    const item6 = {token_id: 6, price: 1.9, rank: 24};
+    const item1 = {token_id: 1, price: 0.9, rank: 499, attributes: [{trait_type: 'body', value: 'not_rare'}]};
+    const item2 = {token_id: 2, price: 1.4, rank: 299, attributes: [{trait_type: 'body', value: 'not_rare'}]};
+    const item3 = {token_id: 3, price: 1.7, rank: 99, attributes: [{trait_type: 'body', value: 'not_rare'}]};
+    const item4 = {token_id: 4, price: 1.9, rank: 99, attributes: [{trait_type: 'body', value: 'not_rare'}]};
+    const item5 = {token_id: 5, price: 1.7, rank: 50, attributes: [{trait_type: 'body', value: 'not_rare'}]};
+    const item6 = {token_id: 6, price: 1.9, rank: 24, attributes: [{trait_type: 'body', value: 'not_rare'}]};
 
     let items = [
         item1,
@@ -96,6 +96,17 @@ describe('Analysis', () => {
     it("should not buy since rarityFactor is set to 0", async () => {
         const result = await analyzeCollection(collectionKey, {name: collectionKey, triggerFactor: '3', rarityFactor: '0'});
         expect(result[0]).to.be.equal(ANALYSIS_CODES.NOT_BUYING);
+    });
+
+    it("shouldn't buy since it hasn't a very rare attribute", async () => {
+        const result = await analyzeCollection('terraAnalysisTest', {name: collectionKey, triggerFactor: '3', rarityFactor: '0'});
+        expect(result[0]).to.be.equal(ANALYSIS_CODES.NOT_BUYING);
+    });
+
+    it("should buy since it has a very rare attribute", async () => {
+        await updateItem(collectionKey, {token_id: 1}, {attributes: [{trait_type: 'body', value: 'rare'}]});
+        const result = await analyzeCollection('terraAnalysisTest', {name: collectionKey, triggerFactor: '3', rarityFactor: '0'});
+        expect(result[0]).to.be.equal(ANALYSIS_CODES.BUYING_IN_SPECIAL_FUNCTION);
     });
 
     /*it("should buy since a rare attribute is below the wanted price", async () => {

@@ -46,7 +46,6 @@ export const generateBuyOrderRandomEarth = (msg) => {
     try {
         return generateBuyOrderFromPostOrder(msg);
     } catch (e) {
-        console.log(e);
         return generateBuyOrderFromSendNFT(msg);
     }
 }

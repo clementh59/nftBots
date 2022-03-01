@@ -6,8 +6,6 @@ scp -r ./src pi@192.168.1.33:/home/pi/rpiBots
 scp docker-compose.yml ubuntu@192.168.1.33:/home/ubuntu/rpiBots
 scp runInLinux ubuntu@192.168.1.33:/home/ubuntu/rpiBots
 
-JkXD9bokJay5JCSYrF
-
 ## Adding a new blockchain / smart contract
 
 - Configure the config file
@@ -15,6 +13,18 @@ JkXD9bokJay5JCSYrF
 - Create an info collection in the db
 - Implement all the functions mandatory in the utils' retrieveAndAnalyzeTxs function.
 - In the infoAndStatusDB, add all the mandatory functions
+
+## Adding a new collection into terra algo
+
+- add the contract in `terra/config`
+```
+"luna_bulls_tesseract": "terra1k5pa7htlznr7hskhr9dx8qlk65emhktrgmuknd"
+```
+- add the collection config in `terra/config`
+```
+{"name": "styllar", "triggerFactor": 3, "rarityFactor": 3},
+```
+- If you want to add a special function for special fields, you can do it by adding it in the `collectionToFunction` map.
 
 ## Buying algorithm
 

@@ -10,7 +10,8 @@ import {
     _addRankToItems_,
     _addUniqueIndex_,
     _createCollection_,
-    _updateItem_, _upsertItem_, _getCollectionsName_, _retrieveCheapestItemsUnderRank_
+    _updateItem_, _upsertItem_, _getCollectionsName_, _retrieveCheapestItemsUnderRank_,
+    _retrieveCheapestItemsWithSpecialTrait_
 } from "../db/db.js";
 import {createRequire} from "module";
 
@@ -79,6 +80,19 @@ export const retrieveNumberOfItems = async (collectionKey) => {
         }
     }, 1, {rank: -1}, 0));
     return lastRank[0] ? lastRank[0].rank : 0;
+}
+
+/**
+ * @param {string} collectionKey - the collection name in the mongo db
+ * @param {object} filter - e.g {token_id: "<token_id>"}
+ * @param {number} limit - the max number of item to retrieve
+ * @param {number} skip - the number of item to skip (i.e pagination)
+ * @param {string} traitName - the name of the trait (e.g 'body')
+ * @param {string} traitValue - the value of the trait (e.g 'yellow')
+ * @returns {Promise<[]>}
+ */
+export const retrieveCheapestItemsWithSpecialTrait = async (collectionKey, filter = {}, limit = 10, skip = 0, traitName, traitValue) => {
+    return _retrieveCheapestItemsWithSpecialTrait_(client, dbName, collectionKey, filter, limit, skip, traitName, traitValue);
 }
 
 ///////////////////            DATABASE UPDATE         ///////////////////
