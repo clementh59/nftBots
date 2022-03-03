@@ -4,6 +4,7 @@ import {closeInfoDbConnection, initInfoDbConnection} from "./infoAndStatusDB/inf
 import {addToLogSystem} from "../logSystem.js";
 
 const main = async () => {
+    console.log('version 2.4');
     await initConnection();
     await initInfoDbConnection();
     addToLogSystem("Launching the bot at " + Date.now());
@@ -14,7 +15,7 @@ const main = async () => {
 
 process.on('SIGINT', async () => {
     console.log('\nStopping the application properly');
-    await addToLogSystem("Stapping the bot at " + Date.now());
+    await addToLogSystem("Stopping the bot at " + Date.now());
     await closeConnection();
     await closeInfoDbConnection();
     process.exit(0);

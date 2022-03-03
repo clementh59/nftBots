@@ -207,10 +207,10 @@ const buy = async (contract, item, msg) => {
 const collectionToSpecialFunction = {
     'terra1f89xq3qhu98v4jch4y5xcrkhl9gytrne99x74t': [ // terrapins
         // assassins
-        {trait_type: 'body', value: 'Assassins Cloak - Black', triggerValue: 6, maxFloorValueInCollectionFloor: 15},
-        {trait_type: 'body', value: 'Assassins Cloak - White', triggerValue: 6, maxFloorValueInCollectionFloor: 15},
-        {trait_type: 'head', value: 'Assassins Cowl - Black', triggerValue: 6, maxFloorValueInCollectionFloor: 15},
-        {trait_type: 'head', value: 'Assassins Cowl - Black', triggerValue: 6, maxFloorValueInCollectionFloor: 15},
+        {trait_type: 'body', value: 'Assassins Cloak - Black', triggerValue: 6, maxFloorValueInCollectionFloor: 10},
+        {trait_type: 'body', value: 'Assassins Cloak - White', triggerValue: 6, maxFloorValueInCollectionFloor: 10},
+        {trait_type: 'head', value: 'Assassins Cowl - Black', triggerValue: 6, maxFloorValueInCollectionFloor: 10},
+        {trait_type: 'head', value: 'Assassins Cowl - Black', triggerValue: 6, maxFloorValueInCollectionFloor: 10},
         // space suit
         {trait_type: 'body', value: 'Space Suit - Red', triggerValue: 17, maxFloorValueInCollectionFloor: 40},
         {trait_type: 'body', value: 'Space Suit - Blue', triggerValue: 17, maxFloorValueInCollectionFloor: 40},
@@ -218,27 +218,27 @@ const collectionToSpecialFunction = {
         {trait_type: 'head', value: 'Astronaut Helmet - Black', triggerValue: 17, maxFloorValueInCollectionFloor: 40},
 
         // Dragon hats
-        {trait_type: 'head', value: 'Dagon Hat - Purple - Laser', triggerValue: 10, maxFloorValueInCollectionFloor: 25},
-        {trait_type: 'head', value: 'Dragon Hat - Green', triggerValue: 2, maxFloorValueInCollectionFloor: 4},
-        {trait_type: 'head', value: 'Dragon Hat - Red', triggerValue: 2, maxFloorValueInCollectionFloor: 4},
-        {trait_type: 'head', value: 'Dragon Hat - Purple', triggerValue: 2, maxFloorValueInCollectionFloor: 4},
+        {trait_type: 'head', value: 'Dagon Hat - Purple - Laser', triggerValue: 10, maxFloorValueInCollectionFloor: 15},
+        {trait_type: 'head', value: 'Dragon Hat - Green', triggerValue: 2, maxFloorValueInCollectionFloor: 3},
+        {trait_type: 'head', value: 'Dragon Hat - Red', triggerValue: 2, maxFloorValueInCollectionFloor: 3},
+        {trait_type: 'head', value: 'Dragon Hat - Purple', triggerValue: 2, maxFloorValueInCollectionFloor: 3},
 
-        {trait_type: 'body', value: 'Genesis', triggerValue: 20, maxFloorValueInCollectionFloor: 40},
-        {trait_type: 'body', value: 'Kimono', triggerValue: 1.9, maxFloorValueInCollectionFloor: 1.7},
-        {trait_type: 'body', value: 'Kings Robe', triggerValue: 1.9, maxFloorValueInCollectionFloor: 1.7},
-        {trait_type: 'body', value: 'Suit of Armour', triggerValue: 3, maxFloorValueInCollectionFloor: 2.5},
-        {trait_type: 'eyes', value: 'Cyborg - Laser', triggerValue: 2.2, maxFloorValueInCollectionFloor: 2.5},
-        {trait_type: 'eyes', value: 'Goggle Steam Punk - Laser', triggerValue: 2.6, maxFloorValueInCollectionFloor: 2.5},
-        {trait_type: 'head', value: 'Plague Mask', triggerValue: 10, maxFloorValueInCollectionFloor: 20},
-        {trait_type: 'head', value: 'Ape Hat', triggerValue: 2.2, maxFloorValueInCollectionFloor: 3},
-        {trait_type: 'head', value: 'Pizza', triggerValue: 2, maxFloorValueInCollectionFloor: 3},
-        {trait_type: 'head', value: 'Mohawk - Rainbow', triggerValue: 2, maxFloorValueInCollectionFloor: 3},
-        {trait_type: 'head', value: 'Pylon Helmet', triggerValue: 10, maxFloorValueInCollectionFloor: 20},
+        {trait_type: 'body', value: 'Genesis', triggerValue: 25, maxFloorValueInCollectionFloor: 40},
+        {trait_type: 'body', value: 'Kimono', triggerValue: 1.3, maxFloorValueInCollectionFloor: 1.6},
+        {trait_type: 'body', value: 'Kings Robe', triggerValue: 1.4, maxFloorValueInCollectionFloor: 1.6},
+        {trait_type: 'body', value: 'Suit of Armour', triggerValue: 2.5, maxFloorValueInCollectionFloor: 2},
+        {trait_type: 'eyes', value: 'Cyborg - Laser', triggerValue: 1.9, maxFloorValueInCollectionFloor: 2},
+        {trait_type: 'eyes', value: 'Goggle Steam Punk - Laser', triggerValue: 2.2, maxFloorValueInCollectionFloor: 2},
+        {trait_type: 'head', value: 'Plague Mask', triggerValue: 7, maxFloorValueInCollectionFloor: 20},
+        {trait_type: 'head', value: 'Ape Hat', triggerValue: 2.2, maxFloorValueInCollectionFloor: 2.5},
+        {trait_type: 'head', value: 'Pizza', triggerValue: 2, maxFloorValueInCollectionFloor: 1.8},
+        {trait_type: 'head', value: 'Mohawk - Rainbow', triggerValue: 1.75, maxFloorValueInCollectionFloor: 1.7},
+        {trait_type: 'head', value: 'Pylon Helmet', triggerValue: 10, maxFloorValueInCollectionFloor: 15},
         {trait_type: 'head', value: 'Knight Helmet - Blue', triggerValue: 2.5, maxFloorValueInCollectionFloor: 3.5},
         {trait_type: 'head', value: 'Knight Helmet - Red', triggerValue: 2.5, maxFloorValueInCollectionFloor: 3.5},
         {trait_type: 'head', value: 'Bunny Ears - Brown', triggerValue: 4, maxFloorValueInCollectionFloor: 6},
         {trait_type: 'head', value: 'Bunny Ears - White', triggerValue: 4, maxFloorValueInCollectionFloor: 6},
-        {trait_type: 'skin', value: 'Zombie', triggerValue: 2.5, maxFloorValueInCollectionFloor: 4},
+        {trait_type: 'skin', value: 'Zombie', triggerValue: 2.25, maxFloorValueInCollectionFloor: 3},
     ],
     'terra1trn7mhgc9e2wfkm5mhr65p3eu7a2lc526uwny2': [ // lunabulls
         // iced out
