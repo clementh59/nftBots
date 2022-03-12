@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --timeout 100000 './src/test/*.spec.js'",
-    "test2": "./node_modules/mocha/bin/mocha --timeout 15000 './src/test/analysis.spec.js'",
+    "test2": "./node_modules/mocha/bin/mocha --timeout 15000 './src/test/randomEarth/randomEarth.spec.js'",
+    "test3": "./node_modules/mocha/bin/mocha --timeout 15000 './src/test/db.spec.js'",
     "terra": "node src/terra/terraBot.js",
     "api": "node src/api/server.js"
   },

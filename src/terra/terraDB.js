@@ -11,7 +11,7 @@ import {
     _addUniqueIndex_,
     _createCollection_,
     _updateItem_, _upsertItem_, _getCollectionsName_, _retrieveCheapestItemsUnderRank_,
-    _retrieveCheapestItemsWithSpecialTrait_
+    _retrieveCheapestItemsWithSpecialTrait_, _addHistoryEntryToItem_
 } from "../db/db.js";
 import {createRequire} from "module";
 
@@ -127,6 +127,16 @@ export const updateItem = async (collectionKey, query, newValues, unsetValues = 
  */
 export const updateItems = async (collectionKey, query, newValues, unsetValues = {}) => {
     return _updateItems_(client, dbName, collectionKey, query, newValues, unsetValues);
+}
+
+/**
+ * @param {string} collectionKey - the collection name in the mongo db
+ * @param {{}} query - e.g { _id: ObjectId('61f68d54dd363a7674c9357f') }
+ * @param {{}} historyEntry - e.g {price: 10, seller: xxx, buyer: xxx, isBid: true, }
+ * @returns {Promise<boolean>}
+ */
+export const addHistoryEntryToItem = async (collectionKey, query, historyEntry) => {
+    return _addHistoryEntryToItem_(client, dbName, collectionKey, query, historyEntry);
 }
 
 /**

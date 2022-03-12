@@ -2,6 +2,7 @@ import {priceInLuna, retrieveAndAnalyzeTxs} from "../../utils.js";
 import {getCollectionNameWithContract, getLastTransactions} from "../terraUtils.js";
 import {createRequire} from "module";
 import {
+    addHistoryEntryToItem,
     getCollectionsName,
     updateItems,
     upsertItem
@@ -262,6 +263,7 @@ const analyzeRandomEarthOrder = async (tx, key, order, msg) => {
     let makerAsset, takerAsset, nft;
     let str = '';
     let info = {};
+    const historyInfo = {};
 
     switch (key) {
         case 'post_order':
@@ -301,18 +303,22 @@ const analyzeRandomEarthOrder = async (tx, key, order, msg) => {
             break;
         case 'execute_order':
             if (order.maker_asset.info.nft) {
-                str = 'direct'
                 makerAsset = order.maker_asset;
                 takerAsset = order.taker_asset;
+                historyInfo.isBid = false;
             } else {
-                str = 'bid';
                 makerAsset = order.taker_asset;
                 takerAsset = order.maker_asset;
+                historyInfo.isBid = true;
             }
             info = await newItemSold(tx, msg, makerAsset, takerAsset, str);
             if (!info)
                 return;
             nft = makerAsset.info.nft;
+            historyInfo.price = info.price;
+            historyInfo.date = info.date;
+            historyInfo.tx = tx.txhash;
+            await addHistoryEntryToItem(getCollectionNameWithContract(nft.contract_addr), {'token_id': info.id}, historyInfo);
             await removeFromDB(info, nft.contract_addr);
             break;
     }

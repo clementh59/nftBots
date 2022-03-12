@@ -1,4 +1,7 @@
 import {MongoClient, ObjectId} from 'mongodb'
+import {isAMochaTest} from "../utils.js";
+
+const dbNameMocha = 'mocha';
 
 ///////////////////            DATABASE READ         ///////////////////
 
@@ -12,6 +15,8 @@ import {MongoClient, ObjectId} from 'mongodb'
  * @returns {Promise<[]>}
  */
 export const _retrieveItems_ = async (client, dbName, collectionKey, filter, limit = 10, skip = 0) => {
+    if (isAMochaTest())
+        dbName = 'mocha';
     return client.db(dbName).collection(collectionKey).find(filter).skip(skip).limit(limit).toArray();
 }
 
@@ -26,6 +31,8 @@ export const _retrieveItems_ = async (client, dbName, collectionKey, filter, lim
  * @returns {Promise<[]>}
  */
 export const _retrieveItemsSorted_ = async (client, dbName, collectionKey, filter, limit = 10, sort, skip = 0) => {
+    if (isAMochaTest())
+        dbName = 'mocha';
     return client.db(dbName).collection(collectionKey).find(filter).sort(sort).skip(skip).limit(limit).toArray();
 }
 
@@ -39,6 +46,8 @@ export const _retrieveItemsSorted_ = async (client, dbName, collectionKey, filte
  * @returns {Promise<[]>}
  */
 export const _retrieveCheapestItems_ = async (client, dbName, collectionKey, filter = {}, limit = 10, skip = 0) => {
+    if (isAMochaTest())
+        dbName = 'mocha';
     const _filter = {
         price: {$exists: true, $ne: null},
         ...filter
@@ -57,6 +66,8 @@ export const _retrieveCheapestItems_ = async (client, dbName, collectionKey, fil
  * @returns {Promise<[]>}
  */
 export const _retrieveCheapestItemsUnderRank_ = async (client, dbName, collectionKey, filter = {}, limit = 10, skip = 0, belowRank) => {
+    if (isAMochaTest())
+        dbName = 'mocha';
     const _filter = {
         price: {$exists: true, $ne: null},
         rank: {$lt: belowRank},
@@ -77,6 +88,8 @@ export const _retrieveCheapestItemsUnderRank_ = async (client, dbName, collectio
  * @returns {Promise<[]>}
  */
 export const _retrieveCheapestItemsWithSpecialTrait_ = async (client, dbName, collectionKey, filter = {}, limit = 10, skip = 0, traitName, traitValue) => {
+    if (isAMochaTest())
+        dbName = 'mocha';
     const _filter = {
         price: {$exists: true, $ne: null},
         attributes: {trait_type: traitName, value: traitValue},
@@ -96,6 +109,9 @@ export const _retrieveCheapestItemsWithSpecialTrait_ = async (client, dbName, co
  * @returns {Promise<boolean>} true if the item was updated - false otherwise
  */
 export const _updateItemWithObjectId_ = async (client, dbName, collectionKey, id, newValues) => {
+    if (isAMochaTest())
+        dbName = 'mocha';
+
     let query;
 
     if (typeof id === 'string')
@@ -116,8 +132,33 @@ export const _updateItemWithObjectId_ = async (client, dbName, collectionKey, id
  * @returns {Promise<boolean>}
  */
 export const _updateItem_ = async (client, dbName, collectionKey, query, newValues, unsetValues = {}) => {
+    if (isAMochaTest())
+        dbName = 'mocha';
     try {
         const newVal = {$set: newValues, $unset: unsetValues};
+        const res = await client.db(dbName).collection(collectionKey).updateOne(query, newVal);
+        return res.acknowledged;
+    } catch (e) {
+        return false;
+    }
+}
+
+/**
+ * @param {MongoClient} client
+ * @param {string} dbName - the db name
+ * @param {string} collectionKey - the collection name in the mongo db
+ * @param {{}} query - e.g { _id: ObjectId('61f68d54dd363a7674c9357f') }
+ * @param {{}} historyEntry - e.g {price: 10, isBid: true, date: xxx, tx: xxx}
+ * @returns {Promise<boolean>}
+ */
+export const _addHistoryEntryToItem_ = async (client, dbName, collectionKey, query, historyEntry) => {
+    if (isAMochaTest())
+        dbName = 'mocha';
+    try {
+        const item = (await _retrieveItems_(client, dbName, collectionKey, query, 1))[0];
+        if (item.history?.find(i => i.txhash === historyEntry.txhash))
+            return true;
+        const newVal = { $push: { history: historyEntry } };
         const res = await client.db(dbName).collection(collectionKey).updateOne(query, newVal);
         return res.acknowledged;
     } catch (e) {
@@ -135,6 +176,8 @@ export const _updateItem_ = async (client, dbName, collectionKey, query, newValu
  * @returns {Promise<boolean>}
  */
 export const _updateItems_ = async (client, dbName, collectionKey, query, newValues, unsetValues = {}) => {
+    if (isAMochaTest())
+        dbName = 'mocha';
     try {
         const newVal = {$set: newValues, $unset: unsetValues};
         const res = await client.db(dbName).collection(collectionKey).updateMany(query, newVal);
@@ -153,6 +196,8 @@ export const _updateItems_ = async (client, dbName, collectionKey, query, newVal
  * @returns {Promise<Document>}
  */
 export const _addRankToItems_ = async (client, dbName, collectionKey, sort) => {
+    if (isAMochaTest())
+        dbName = 'mocha';
 
     let items = [];
     let skip = 0;
@@ -177,6 +222,8 @@ export const _addRankToItems_ = async (client, dbName, collectionKey, sort) => {
  * @returns {Promise<boolean>} true if the item was added - false otherwise
  */
 export const _addItemToCollection_ = async (client, dbName, collectionKey, item) => {
+    if (isAMochaTest())
+        dbName = 'mocha';
     try {
         const res = await client.db(dbName).collection(collectionKey).insertOne(item);
         return res.acknowledged;
@@ -194,6 +241,8 @@ export const _addItemToCollection_ = async (client, dbName, collectionKey, item)
  * @returns {Promise<boolean>} true if the item were added - false otherwise
  */
 export const _addItemsToCollection_ = async (client, dbName, collectionKey, items) => {
+    if (isAMochaTest())
+        dbName = 'mocha';
     try {
         const res = await client.db(dbName).collection(collectionKey).insertMany(items);
         return res.acknowledged;
@@ -215,11 +264,14 @@ export const _addItemsToCollection_ = async (client, dbName, collectionKey, item
  * @returns {Promise<boolean>}
  */
 export const _upsertItem_ = async (client, dbName, collectionKey, query, values, unsetValues = {}) => {
+    if (isAMochaTest())
+        dbName = 'mocha';
     try {
         const newVal = {$set: values, $unset: unsetValues};
         const res = await client.db(dbName).collection(collectionKey).updateOne(query, newVal, {upsert: true});
         return res.acknowledged;
     } catch (e) {
+        console.log(e);
         return false;
     }
 }
@@ -266,6 +318,8 @@ export const _closeConnection_ = async (client) => {
  * @returns {Promise<boolean>} true if it succeeded - false otherwise
  */
 export const _addUniqueIndex_ = async (client, dbName, collectionKey, fieldParameter) => {
+    if (isAMochaTest())
+        dbName = 'mocha';
     try {
         const res = await client.db(dbName).collection(collectionKey).createIndex(fieldParameter, {unique: true});
         return res.toString().endsWith('_1');
@@ -282,6 +336,8 @@ export const _addUniqueIndex_ = async (client, dbName, collectionKey, fieldParam
  * @returns {Promise<boolean>} true if it succeeded - false otherwise
  */
 export const _createCollection_ = async (client, dbName, collectionKey) => {
+    if (isAMochaTest())
+        dbName = 'mocha';
     try {
         await client.db(dbName).createCollection(collectionKey);
         return true;
@@ -299,6 +355,8 @@ export const _createCollection_ = async (client, dbName, collectionKey) => {
  * @returns {Promise<boolean>} true if it succeeded - false otherwise
  */
 export const _renameCollection_ = async (client, dbName, collectionKey, newCollectionKey) => {
+    if (isAMochaTest())
+        dbName = 'mocha';
     try {
         await client.db(dbName).collection(collectionKey).rename(newCollectionKey);
         return true;
@@ -314,6 +372,8 @@ export const _renameCollection_ = async (client, dbName, collectionKey, newColle
  * @returns {Promise<string[]>} the collections
  */
 export const _getCollectionsName_ = async (client, dbName) => {
+    if (isAMochaTest())
+        dbName = 'mocha';
     return (await (await client.db(dbName).listCollections()).toArray()).map((i) => i.name);
 }
 
@@ -325,6 +385,8 @@ export const _getCollectionsName_ = async (client, dbName) => {
  * @returns {Promise<boolean>} true if it succeeded - false otherwise
  */
 export const _deleteCollection_ = async (client, dbName, collectionKey) => {
+    if (isAMochaTest())
+        dbName = 'mocha';
     try {
         await client.db(dbName).collection(collectionKey).drop();
         return true;

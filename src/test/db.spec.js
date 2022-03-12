@@ -13,14 +13,15 @@ import {
     _addRankToItems_,
     _updateItems_,
     _retrieveCheapestItems_,
-    _updateItem_, _upsertItem_, _renameCollection_, _getCollectionsName_
+    _updateItem_, _upsertItem_, _renameCollection_, _getCollectionsName_, _addHistoryEntryToItem_
 } from "../db/db.js";
 import {createRequire} from "module";
+
 const require = createRequire(import.meta.url);
 export const config = require("../terra/config.json")
 
 const uri = config.mongo.uri;
-const dbName = config.mongo.dbs.collections;
+const dbName = 'mocha';
 
 describe('connection and closing function', () => {
 
@@ -42,10 +43,10 @@ describe('collection', () => {
     const newCollectionKey = 'automatedTestsRenamed';
     const items = [
         {key: 'test1', score: 2.2, price: 1},
-        {key: 'test2', score : 1.1, price: 3},
-        {key: 'test3', score : 1.05, price: 2},
-        {key: 'test4', score : 8, price: 4},
-        {key: 'test5', score : 4.02},
+        {key: 'test2', score: 1.1, price: 3},
+        {key: 'test3', score: 1.05, price: 2},
+        {key: 'test4', score: 8, price: 4},
+        {key: 'test5', score: 4.02},
     ]
     let client;
 
@@ -166,6 +167,34 @@ describe('collection', () => {
         const item = (await _retrieveItems_(client, dbName, collectionKey, {key: 'test1010'}, 1))[0];
         expect(item.name).to.be.equal(undefined);
         expect(item.testKey).to.be.equal('testKey');
+    });
+
+    it('should add an item history', async () => {
+        let res = await _addHistoryEntryToItem_(client, dbName, collectionKey, {key: 'test1010'}, {
+            price: 2,
+            seller: 'terraABC',
+            buyer: 'terraDEF',
+            date: '2022-03-08T21:43:37Z',
+        });
+        expect(res).to.be.equal(true);
+        let item = (await _retrieveItems_(client, dbName, collectionKey, {key: 'test1010'}, 1))[0];
+        expect(item.history.length).to.be.equal(1);
+        expect(item.history).to.deep.equal([
+            {
+                price: 2,
+                seller: 'terraABC',
+                buyer: 'terraDEF',
+                date: '2022-03-08T21:43:37Z',
+            }
+        ]);
+        await _addHistoryEntryToItem_(client, dbName, collectionKey, {key: 'test1010'}, {
+            price: 3,
+            seller: 'terraABC',
+            buyer: 'terraDEF',
+            date: '2022-03-10T21:43:37Z',
+        });
+        item = (await _retrieveItems_(client, dbName, collectionKey, {key: 'test1010'}, 1))[0];
+        expect(item.history.length).to.be.equal(2);
     });
 
     it('should rename a collection', async () => {

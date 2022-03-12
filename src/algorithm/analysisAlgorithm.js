@@ -9,6 +9,7 @@ import {
 import {createRequire} from "module";
 import {addToLogSystem} from "../logSystem.js";
 import {autoBuyItemRandomEarth} from "../terra/randomEarth/randomEarthBot.js";
+import {isAMochaTest} from "../utils.js";
 
 const require = createRequire(import.meta.url);
 const config = require("../terra/config.json");
@@ -176,11 +177,9 @@ const analyzeCustomFieldOfCollection = async (collectionName, fieldToAnalyze, fl
  */
 const buy = async (contract, item, msg) => {
 
-    const isAMochaTest = typeof global.it === 'function';
-
     addToLogSystem('enter buy');
 
-    if (isAMochaTest)
+    if (isAMochaTest())
         return;
 
     if (!itemBought.includes(contract + item.token_id + item.price)) {

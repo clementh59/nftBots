@@ -20,7 +20,7 @@ export const config = require("../terra/config.json")
 const collectionKey = 'terraAnalysisTest';
 const contract = 'terra1234567890';
 
-describe('Analysis', () => {
+describe('Buying analysis', () => {
 
     const item1 = {token_id: 1, price: 0.9, rank: 499, attributes: [{trait_type: 'body', value: 'not_rare'}]};
     const item2 = {token_id: 2, price: 1.4, rank: 299, attributes: [{trait_type: 'body', value: 'not_rare'}]};
@@ -109,9 +109,6 @@ describe('Analysis', () => {
         expect(result[0]).to.be.equal(ANALYSIS_CODES.BUYING_IN_SPECIAL_FUNCTION);
     });
 
-    /*it("should buy since a rare attribute is below the wanted price", async () => {
-        const result = await analyzeCollection(collectionKey, {name: collectionKey, triggerFactor: '3', rarityFactor: '4'});
-        expect(result[0].token_id).to.be.equal(6);
-    });*/
+
 
 });
