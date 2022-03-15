@@ -318,6 +318,7 @@ const analyzeRandomEarthOrder = async (tx, key, order, msg) => {
             historyInfo.price = info.price;
             historyInfo.date = info.date;
             historyInfo.tx = tx.txhash;
+            historyInfo.marketplace = 'randomEarth';
             await addHistoryEntryToItem(getCollectionNameWithContract(nft.contract_addr), {'token_id': info.id}, historyInfo);
             await removeFromDB(info, nft.contract_addr);
             break;

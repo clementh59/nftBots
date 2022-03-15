@@ -13,7 +13,7 @@ import {
     _addRankToItems_,
     _updateItems_,
     _retrieveCheapestItems_,
-    _updateItem_, _upsertItem_, _renameCollection_, _getCollectionsName_, _addHistoryEntryToItem_
+    _updateItem_, _upsertItem_, _renameCollection_, _getCollectionsName_, _addHistoryEntryToItem_, _deleteItem_
 } from "../db/db.js";
 import {createRequire} from "module";
 
@@ -175,6 +175,7 @@ describe('collection', () => {
             seller: 'terraABC',
             buyer: 'terraDEF',
             date: '2022-03-08T21:43:37Z',
+            txhash: 'BCD'
         });
         expect(res).to.be.equal(true);
         let item = (await _retrieveItems_(client, dbName, collectionKey, {key: 'test1010'}, 1))[0];
@@ -185,6 +186,7 @@ describe('collection', () => {
                 seller: 'terraABC',
                 buyer: 'terraDEF',
                 date: '2022-03-08T21:43:37Z',
+                txhash: 'BCD'
             }
         ]);
         await _addHistoryEntryToItem_(client, dbName, collectionKey, {key: 'test1010'}, {
@@ -192,6 +194,7 @@ describe('collection', () => {
             seller: 'terraABC',
             buyer: 'terraDEF',
             date: '2022-03-10T21:43:37Z',
+            txhash: 'ABC',
         });
         item = (await _retrieveItems_(client, dbName, collectionKey, {key: 'test1010'}, 1))[0];
         expect(item.history.length).to.be.equal(2);
@@ -204,9 +207,17 @@ describe('collection', () => {
         expect(item.testKey).to.be.equal('testKey');
     });
 
+    it('should delete an item', async () => {
+        let res = await _deleteItem_(client, dbName, collectionKey, {key: 'test1010'});
+        expect(res).to.be.equal(true);
+        let item = (await _retrieveItems_(client, dbName, collectionKey, {key: 'test1010'}, 1))[0];
+        expect(item).to.be.equal(undefined);
+    });
+
     it('should retrieve the collections name', async () => {
         const res = await _getCollectionsName_(client, dbName);
-        console.log(res.includes(newCollectionKey));
+        const include = res.includes(newCollectionKey);
+        expect(include).to.be.equal(true);
     });
 
     it('should delete a collection', async () => {

@@ -6,7 +6,7 @@ import {closeConnection, deleteCollection, initConnection, retrieveItems} from "
 const require = createRequire(import.meta.url);
 export const data = require("./data.json");
 
-describe('Transaction analysis', () => {
+describe('Transaction analysis - RandomEarth', () => {
 
     before(async () => {
         await initConnection();

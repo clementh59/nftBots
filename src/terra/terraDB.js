@@ -11,7 +11,7 @@ import {
     _addUniqueIndex_,
     _createCollection_,
     _updateItem_, _upsertItem_, _getCollectionsName_, _retrieveCheapestItemsUnderRank_,
-    _retrieveCheapestItemsWithSpecialTrait_, _addHistoryEntryToItem_
+    _retrieveCheapestItemsWithSpecialTrait_, _addHistoryEntryToItem_, _deleteItem_
 } from "../db/db.js";
 import {createRequire} from "module";
 
@@ -182,6 +182,18 @@ export const addItemsToCollection = async (collectionKey, items) => {
  */
 export const upsertItem = async (collectionKey, query, values, unsetValues = {}) => {
     return _upsertItem_(client, dbName, collectionKey, query, values, unsetValues);
+}
+
+///////////////////            DATABASE DELETE         ///////////////////
+
+/**
+ * Delete an item from the db
+ * @param {string} collectionKey - the collection name in the mongo db
+ * @param {{}} query - e.g { _id: ObjectId('61f68d54dd363a7674c9357f') }
+ * @returns {Promise<boolean>}
+ */
+export const deleteItem = async (collectionKey, query) => {
+    return _deleteItem_(client, dbName, collectionKey, query);
 }
 
 ///////////////////             DATABASE MANAGEMENT         ///////////////////

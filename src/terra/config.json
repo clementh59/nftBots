@@ -2,6 +2,7 @@
   "timeBetweenTerraFinderRequests": 500,
   "contracts": {
     "randomEarth": "terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t",
+    "luart": "terra1fj44gmt0rtphu623zxge7u3t85qy0jg6p5ucnk",
     "galactic_punks": "terra103z9cnqm8psy0nyxqtugg6m7xnwvlkqdzm4s4k",
     "luna_bulls": "terra1trn7mhgc9e2wfkm5mhr65p3eu7a2lc526uwny2",
     "terrapins": "terra1f89xq3qhu98v4jch4y5xcrkhl9gytrne99x74t",

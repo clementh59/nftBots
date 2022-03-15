@@ -276,6 +276,28 @@ export const _upsertItem_ = async (client, dbName, collectionKey, query, values,
     }
 }
 
+///////////////////            DATABASE DELETE         ///////////////////
+
+/**
+ * Delete an item from the db
+ * @param {MongoClient} client
+ * @param {string} dbName - the db name
+ * @param {string} collectionKey - the collection name in the mongo db
+ * @param {{}} query - e.g { _id: ObjectId('61f68d54dd363a7674c9357f') }
+ * @returns {Promise<boolean>}
+ */
+export const _deleteItem_ = async (client, dbName, collectionKey, query) => {
+    if (isAMochaTest())
+        dbName = 'mocha';
+    try {
+        const res = await client.db(dbName).collection(collectionKey).deleteOne(query);
+        return res.acknowledged;
+    } catch (e) {
+        console.log(e);
+        return false;
+    }
+}
+
 ///////////////////             DATABASE MANAGEMENT         ///////////////////
 
 /**
