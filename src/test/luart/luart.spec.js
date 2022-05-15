@@ -75,4 +75,6 @@ describe('Transaction analysis - Luart', () => {
         expect(res.price).to.be.equal(undefined);
     });
 
+    it("Should remove an expired sale");
+
 });

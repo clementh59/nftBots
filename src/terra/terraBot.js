@@ -2,9 +2,10 @@ import {randomEarthBot} from "./randomEarth/randomEarthBot.js";
 import {closeConnection, initConnection} from "./terraDB.js";
 import {closeInfoDbConnection, initInfoDbConnection} from "./infoAndStatusDB/infoAndStatusDB.js";
 import {addToLogSystem} from "../logSystem.js";
+import {luartBot} from "./luart/luart.js";
 
 const main = async () => {
-    console.log('version 2.4');
+    console.log('version 2.5');
     await initConnection();
     await initInfoDbConnection();
     addToLogSystem("Launching the bot at " + Date.now());

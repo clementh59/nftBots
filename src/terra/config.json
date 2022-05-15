@@ -76,7 +76,7 @@
   "mongo": {
     "uri": "mongodb://192.168.1.29:27017",
     "dbs": {
-      "collections": "terra"
+      "collections": "terra_testnet"
     }
   },
   "constants": {

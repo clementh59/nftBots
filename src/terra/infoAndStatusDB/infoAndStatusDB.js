@@ -15,7 +15,8 @@ const collectionName = 'info';
 let client;
 
 const fields = {
-    randomEarth: 'lastTxAnalyzedRandomEarth'
+    randomEarth: 'lastTxAnalyzedRandomEarth',
+    luart: 'lastTxAnalyzedLuart'
 };
 
 /**
@@ -44,6 +45,24 @@ export const setLastTransactionAnalyzedRandomEarth = async (lastTxId) => {
  */
 export const getLastTransactionIdAnalyzedRandomEarth = async () => {
     return (await getLastTransactionIdAnalyzed())[fields.randomEarth];
+}
+
+/**
+ *
+ * @param {{number}} lastTxId
+ * @returns {Promise<void>}
+ * @private
+ */
+export const setLastTransactionAnalyzedLuart = async (lastTxId) => {
+    return setLastTransactionAnalyzed(lastTxId, fields.luart);
+}
+
+/**
+ *
+ * @returns {Promise<number>}
+ */
+export const getLastTransactionIdAnalyzedLuart = async () => {
+    return (await getLastTransactionIdAnalyzed())[fields.luart];
 }
 
 /**
