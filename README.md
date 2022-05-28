@@ -1,10 +1,10 @@
 ## Communicating with rpi
 
-ssh pi@192.168.1.33
-scp -r ../rpiBots/ pi@192.168.1.33:/home/pi/
-scp -r ./src pi@192.168.1.33:/home/pi/rpiBots
-scp docker-compose.yml ubuntu@192.168.1.33:/home/ubuntu/rpiBots
-scp runInLinux ubuntu@192.168.1.33:/home/ubuntu/rpiBots
+ssh clement@192.168.0.15
+scp -r ../rpiBots/ clement@192.168.0.15:/home/pi/
+scp -r ./src clement@192.168.0.15:/home/pi/rpiBots
+scp docker-compose.yml clement@192.168.0.15:/home/ubuntu/rpiBots
+scp runInLinux clement@192.168.0.15:/home/ubuntu/rpiBots
 
 ## Adding a new blockchain / smart contract
 
@@ -61,7 +61,7 @@ use terra
 
 2. Connect compass
 ```
-mongodb://192.168.1.29:27017/terra?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false
+mongodb://192.168.0.15:27017/terra?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false
 ```
 
 3. Use the script (and modify it) to import data. Don't forget to add token_id index in each collections.

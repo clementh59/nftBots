@@ -1,0 +1,39 @@
+{
+  "timeBetweenElrondAPIRequests": 3000,
+  "contracts": {
+    "trustMarket": "erd1qqqqqqqqqqqqqpgq6wegs2xkypfpync8mn2sa5cmpqjlvrhwz5nqgepyg8"
+  },
+  "collectionHandled": [
+    {"name": "galactic_punks", "triggerFactor": 5, "rarityFactor": 3},
+    {"name": "default", "buy": false}
+  ],
+  "triggerScale": {
+    "1": "0.03",
+    "2": "0.2",
+    "3": "0.35",
+    "4": "0.5",
+    "5": "0.75"
+  },
+  "rarityScale": {
+    "0": "0",
+    "1": "1.25",
+    "2": "2.5",
+    "3": "5",
+    "4": "10",
+    "5": "20"
+  },
+  "mongo": {
+    "uri": "mongodb://192.168.0.15:27017",
+    "dbs": {
+      "collections": "elrond"
+    }
+  },
+  "constants": {
+    "infoCollection": "info",
+    "order": {
+      "AUCTION": 2,
+      "SALE": 1,
+      "NONE": 0
+    }
+  }
+}
