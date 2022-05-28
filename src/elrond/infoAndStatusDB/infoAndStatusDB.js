@@ -29,20 +29,23 @@ export const setLastTransactionAnalyzedTrustMarket = async (lastTxHash, lastTxTi
 
 /**
  *
- * @returns {Promise<number>}
+ * @returns {Promise<{hash: *, timestamp: *}>}
  */
 export const getLastTransactionIdAnalyzedTrustMarket = async () => {
-    const res = (await getLastTransactionIdAnalyzed());
-    console.log(res);
+    return getLastTransactionIdAnalyzed('TrustMarket');
 }
 
 /**
- *
- * @returns {Promise<number>}
+ * @param {string} platform - e.g 'TrustMarket'
+ * @returns {Promise<{hash: *, timestamp: *}>}
  */
-const getLastTransactionIdAnalyzed = async () => {
+const getLastTransactionIdAnalyzed = async (platform) => {
     const items = await _retrieveItems_(client, dbName, collectionName, {}, 1);
-    return items[0];
+    console.log(items);
+    return {
+        timestamp: items[0][`lastTxTimestamp${platform}`] ,
+        hash: items[0][`lastTxHash${platform}`]
+    };
 }
 
 /**
@@ -56,7 +59,7 @@ const getLastTransactionIdAnalyzed = async () => {
 const setLastTransactionAnalyzed = async (lastTxHash, txTimestamp, platformName) => {
     const values = {};
     values[`lastTxHash${platformName}`] = lastTxHash;
-    values[`lastTxTimestamp${platformName}`] = lastTxHash;
+    values[`lastTxTimestamp${platformName}`] = txTimestamp;
     return _updateItem_(client, dbName, collectionName, {}, values);
 }
 

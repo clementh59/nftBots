@@ -1,7 +1,21 @@
 import {retrieveAndAnalyzeTxs} from "../utils.js";
-import config from "./config.json";
+import {createRequire} from "module";
+const require = createRequire(import.meta.url);
+const config = require("./config.json");
 import {getLastTransactions} from "./elrondUtils.js";
 import {addToLogSystem} from "../logSystem.js";
+import {
+    getLastTransactionIdAnalyzedTrustMarket,
+    setLastTransactionAnalyzedTrustMarket
+} from "./infoAndStatusDB/infoAndStatusDB.js";
+
+/**
+ * The function that is called when db is up to date with the blockchain
+ * @returns {Promise<void>}
+ */
+export const endOfLoopTreatment = async () => {
+    console.log('db is up to date');
+}
 
 const getLastTxs = async (offset) => {
     return getLastTransactions(config.contracts.trustMarket, offset, 50);
@@ -87,18 +101,25 @@ const analyzeTrustMarketTransaction = async (tx) => {
     }
 }
 
+const setLastTransactionAnalyzed = async (tx) => {
+    await setLastTransactionAnalyzedTrustMarket(tx.txHash, tx.timestamp);
+}
+
 export const trustMarketBot = async () => {
-    const {timestamp, hash} = getLastTransactionAnalyzedTrustMarket();
+    const {timestamp, hash} = await getLastTransactionIdAnalyzedTrustMarket();
+    const txHasBeenAnalyzed = (tx) => {
+        if (tx.timestamp > timestamp)
+            return false;
+        // this method isn't perfect if multiple txs have the same timestamp
+        return tx.hash === hash;
+    }
     retrieveAndAnalyzeTxs({
         "getLastTransactions": getLastTxs,
+        "txHasBeenAnalyzed": txHasBeenAnalyzed,
         "analyzeTransaction": analyzeTrustMarketTransaction,
-        "lastTransactionAnalyzed": {
-            timestamp,
-            hash
-        },
-        "setLastTransactionAnalyzed": setLastTransactionAnalyzedRandomEarth,
+        "setLastTransactionAnalyzed": setLastTransactionAnalyzed,
         "instance": "TrustMarket",
         "timeBetweenRequests": config.timeBetweenElrondAPIRequests,
         "endOfLoopTreatment": endOfLoopTreatment,
-    }, 0);
+    });
 }

@@ -418,11 +418,18 @@ export const endOfLoopTreatment = async () => {
 
 export const randomEarthBot = async () => {
     const lastTxAnalyzed = await getLastTransactionIdAnalyzedRandomEarth();
+    const txHasBeenAnalyzed = (tx) => { // todo: this hasn't been tested
+        return lastTxAnalyzed < tx.id;
+    }
+    const setLastTxAnalyzed = async (tx) => {
+        await setLastTransactionAnalyzedRandomEarth(tx.id);
+    }
     retrieveAndAnalyzeTxs({
         "getLastTransactions": getLastTxs,
+        "txHasBeenAnalyzed": txHasBeenAnalyzed,
         "analyzeTransaction": analyzeRandomEarthTransaction,
         "lastTransactionIdAnalyzed": lastTxAnalyzed,
-        "setLastTransactionAnalyzed": setLastTransactionAnalyzedRandomEarth,
+        "setLastTransactionAnalyzed": setLastTxAnalyzed,
         "instance": "RandomEarth",
         "timeBetweenRequests": config.timeBetweenTerraFinderRequests,
         "endOfLoopTreatment": endOfLoopTreatment,
