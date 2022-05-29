@@ -9,6 +9,7 @@
     "test2": "./node_modules/mocha/bin/mocha --timeout 15000 './src/test/luart/luart.spec.js'",
     "test3": "./node_modules/mocha/bin/mocha --timeout 15000 './src/test/db.spec.js'",
     "terra": "node src/terra/terraBot.js",
+    "elrond": "node src/elrond/elrondBot.js",
     "api": "node src/api/server.js"
   },
   "author": "",

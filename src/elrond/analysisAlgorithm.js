@@ -1,5 +1,5 @@
 import {rates} from "./priceRateService.js";
-import {addToLogErrorSystem} from "../logSystem.js";
+import {addToLogErrorSystem, addToLogSystem} from "../logSystem.js";
 import {retrieveCheapestItems} from "./elrondDB.js";
 import {buildTrustMarketUrlFromDbItem} from "./elrondUtils.js";
 
@@ -8,10 +8,6 @@ import {buildTrustMarketUrlFromDbItem} from "./elrondUtils.js";
  * @param {[string]} collections - the contract addresses of collections - NOT NAMES
  */
 export const analyzeSales = async (collections) => {
-    rates.EGLD = 75;
-    rates.RIDE = 0.375;
-    rates.MEX = 0.0000886308995734;
-    rates["LK-MEX"] = 0.000041168011978253556;
     if (
         rates.EGLD === -1
         || rates.RIDE === -1
@@ -24,6 +20,7 @@ export const analyzeSales = async (collections) => {
 
     const promises = [];
     collections = [...new Set(collections)];
+    addToLogSystem(collections);
     for (let i = 0; i < collections.length; i++) {
         promises.push(analyzeCollection(collections[i]));
     }
@@ -61,6 +58,8 @@ const analyzeCollection = async (collectionName) => {
     if (cheapestItems[0].price <= cheapestItems[1].price * triggerFactor) {
         await buy(cheapestItems[0], collectionName, `Buying ${cheapestItems[0].name ? cheapestItems[0].name : collectionName} at ${cheapestItems[0].price} because floor is ${cheapestItems[1].price}`);
         res.push(cheapestItems[0]);
+    } else {
+        addToLogSystem(`${collectionName} - No (1) - ${cheapestItems[0].price} > ${cheapestItems[1].price * triggerFactor}`);
     }
 }
 

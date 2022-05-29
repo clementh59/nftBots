@@ -136,6 +136,8 @@ const analyzeTrustMarketTransaction = async (tx) => {
                 break;
             case 'bid':
                 break;
+            case 'cleanExpiredOffers':
+                break;
             case 'endAuction':
                 break;
             case 'acceptOffer':
