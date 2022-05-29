@@ -43,9 +43,20 @@ export const getLastTransactions = async (contract, offset, amount) => {
             "method": "GET",
             "mode": "cors"
         }, 4000);
-        return await res.json();
+        const txs = await res.json();
+        // I remove the txs that occurred after a tx that is pending
+        let start = 0;
+        for (let i = 0; i < txs.length; i++) {
+            if (txs[i].status === 'pending')
+                start = i + 1;
+        }
+        return txs.slice(start, txs.length);
     } catch (e) {
-        console.log(e);
         return getLastTransactions(contract, offset, amount);
     }
+}
+
+export const buildTrustMarketUrlFromDbItem = (item, collection) => {
+    const hexNFTNumber = item.token_id.toString(16);
+    return `https://www.trust.market/nft/${collection}-${hexNFTNumber}`
 }

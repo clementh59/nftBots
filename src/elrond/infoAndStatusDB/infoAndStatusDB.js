@@ -42,7 +42,7 @@ export const getLastTransactionIdAnalyzedTrustMarket = async () => {
 const getLastTransactionIdAnalyzed = async (platform) => {
     const items = await _retrieveItems_(client, dbName, collectionName, {}, 1);
     return {
-        timestamp: items[0][`lastTxTimestamp${platform}`] ,
+        timestamp: items[0][`lastTxTimestamp${platform}`],
         hash: items[0][`lastTxHash${platform}`]
     };
 }

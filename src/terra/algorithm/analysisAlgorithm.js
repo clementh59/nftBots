@@ -1,4 +1,4 @@
-import {sendMail} from "../utils.js";
+import {sendMail} from "../../utils.js";
 import {getCollectionConfigFromContract, getCollectionNameWithContract} from "../terra/terraUtils.js";
 import {
     retrieveCheapestItems,
