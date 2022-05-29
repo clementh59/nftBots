@@ -423,10 +423,12 @@ export const randomEarthBot = async () => {
     }
     const setLastTxAnalyzed = async (tx) => {
         await setLastTransactionAnalyzedRandomEarth(tx.id);
+        return tx.id;
     }
     retrieveAndAnalyzeTxs({
         "getLastTransactions": getLastTxs,
         "txHasBeenAnalyzed": txHasBeenAnalyzed,
+        "lastTxAnalyzed": lastTxAnalyzed,
         "analyzeTransaction": analyzeRandomEarthTransaction,
         "lastTransactionIdAnalyzed": lastTxAnalyzed,
         "setLastTransactionAnalyzed": setLastTxAnalyzed,

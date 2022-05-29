@@ -1,8 +1,17 @@
 import {retrieveAndAnalyzeTxs} from "../utils.js";
 import {createRequire} from "module";
+
 const require = createRequire(import.meta.url);
 const config = require("./config.json");
-import {getLastTransactions} from "./elrondUtils.js";
+import {
+    base64ToHex,
+    decodeBase64,
+    decodeTransactionData,
+    getLastTransactions,
+    hexToDecimal,
+    hexToString,
+    microCurrencyToCurrency
+} from "./elrondUtils.js";
 import {addToLogSystem} from "../logSystem.js";
 import {
     getLastTransactionIdAnalyzedTrustMarket,
@@ -49,7 +58,7 @@ const analyzeTrustMarketTransaction = async (tx) => {
 
             collection = hexToString(hexCollectionName);
             number = hexToDecimal(hexNFTNumber);
-            //console.log(`New item bought - https://www.trust.market/nft/${collection}-${hexNFTNumber} - ${price} ${currency}`);
+            console.log(`New item bought - https://www.trust.market/nft/${collection}-${hexNFTNumber} - ${price} ${currency}`);
 
             break;
         case 'listing':
@@ -61,7 +70,7 @@ const analyzeTrustMarketTransaction = async (tx) => {
 
             collection = hexToString(hexCollectionName);
             number = hexToDecimal(hexNFTNumber);
-            //console.log(`Listing - https://www.trust.market/nft/${collection}-${hexNFTNumber} - ${price} ${currency}`)
+            console.log(`Listing - https://www.trust.market/nft/${collection}-${hexNFTNumber} - ${price} ${currency}`)
             break;
         case 'withdraw':
             break;
@@ -72,17 +81,15 @@ const analyzeTrustMarketTransaction = async (tx) => {
             number = hexToDecimal(hexNFTNumber);
             currency = decodeBase64(topics[7]);
             price = microCurrencyToCurrency(hexToDecimal(base64ToHex(topics[6])));
-            //console.log(`Price change - https://www.trust.market/nft/${collection}-${hexNFTNumber} - ${price} ${currency}`)
+            console.log(`Price change - https://www.trust.market/nft/${collection}-${hexNFTNumber} - ${price} ${currency}`)
             break;
         case 'sendOffer':
             break;
         case 'withdrawOffer':
             break;
-        case 'endAuction':
-            console.log(JSON.stringify(tx));
-            process.exit(0);
-            break;
         case 'bid':
+            break;
+        case 'endAuction':
             break;
         case 'acceptOffer':
             topics = tx.logs.events[1].topics;
@@ -91,8 +98,7 @@ const analyzeTrustMarketTransaction = async (tx) => {
             number = hexToDecimal(hexNFTNumber);
             price = microCurrencyToCurrency(hexToDecimal(base64ToHex(topics[7])));
             currency = decodeBase64(topics[4]);
-            // console.log(`Offer accepted - https://www.trust.market/nft/${collection}-${hexNFTNumber} - ${price} ${currency}`)
-            process.exit(0);
+            console.log(`Offer accepted - https://www.trust.market/nft/${collection}-${hexNFTNumber} - ${price} ${currency}`)
             break;
         default:
             addToLogSystem(JSON.stringify(tx));
@@ -103,19 +109,27 @@ const analyzeTrustMarketTransaction = async (tx) => {
 
 const setLastTransactionAnalyzed = async (tx) => {
     await setLastTransactionAnalyzedTrustMarket(tx.txHash, tx.timestamp);
+    return {
+        hash: tx.txHash,
+        timestamp: tx.timestamp
+    }
+}
+
+const txHasBeenAnalyzed = (tx, txComparison) => {
+    if (tx.timestamp > txComparison.timestamp)
+        return false;
+    // this method isn't perfect if multiple txs have the same timestamp
+    if (tx.timestamp === txComparison.timestamp && tx.txHash !== txComparison.hash)
+        return false;
+    return true;
 }
 
 export const trustMarketBot = async () => {
-    const {timestamp, hash} = await getLastTransactionIdAnalyzedTrustMarket();
-    const txHasBeenAnalyzed = (tx) => {
-        if (tx.timestamp > timestamp)
-            return false;
-        // this method isn't perfect if multiple txs have the same timestamp
-        return tx.hash === hash;
-    }
+    const lastTxAnalyzed = await getLastTransactionIdAnalyzedTrustMarket();
     retrieveAndAnalyzeTxs({
         "getLastTransactions": getLastTxs,
         "txHasBeenAnalyzed": txHasBeenAnalyzed,
+        "lastTxAnalyzed": lastTxAnalyzed,
         "analyzeTransaction": analyzeTrustMarketTransaction,
         "setLastTransactionAnalyzed": setLastTransactionAnalyzed,
         "instance": "TrustMarket",
