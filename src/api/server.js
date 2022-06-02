@@ -1,14 +1,24 @@
 import {
-    getCollectionsName,
+    getCollectionsName as getTerraCollectionsName,
     initConnection as initTerraConnection,
     retrieveCheapestItems as retrieveTerraCheapestItems,
     retrieveCheapestItemsUnderRank as retrieveTerraCheapestItemsUnderRank,
-    retrieveNumberOfItems
+    retrieveNumberOfItems as retrieveTerraNumberOfItems
 } from "../terra/terraDB.js";
+
+import {
+    initConnection as initElrondConnection,
+    getCollectionsName as getElrondCollectionsName,
+    retrieveNumberOfItems as retrieveElrondNumberOfItems,
+    retrieveCheapestItems as retrieveElrondCheapestItems,
+    retrieveCheapestItemsUnderRank as retrieveElrondCheapestItemsUnderRank, retrieveCheapestItemsIncludingAllCurrencies,
+} from "../elrond/elrondDB.js";
 
 import express from 'express';
 import cors from 'cors';
 import {getCollectionNameWithContract, getContractWithCollectionName} from "../terra/terraUtils.js";
+import {buildTrustMarketUrlFromDbItem} from "../elrond/elrondUtils.js";
+import {loadLKMexPrice, rates} from "../elrond/priceRateService.js";
 
 const app = express()
 const port = 2727;
@@ -44,22 +54,33 @@ app.get('/getCheapestItems?', async (req, res) => {
         }
     }
 
-    const contract = getContractWithCollectionName(collection);
+    let contract;
+    let numberOfItems;
 
     switch (blockchain) {
         case 'terra':
+            contract = getContractWithCollectionName(collection);
             if (belowRank === -1)
                 items = await retrieveTerraCheapestItems(collection, {}, perPage, (page - 1) * perPage);
             else
                 items = await retrieveTerraCheapestItemsUnderRank(collection, {}, perPage, (page - 1) * perPage, belowRank);
+            numberOfItems = await retrieveTerraNumberOfItems(collection);
+            break;
+        case 'elrond':
+            if (belowRank === -1)
+                items = await retrieveCheapestItemsIncludingAllCurrencies(collection,  perPage, (page - 1) * perPage);
+            else
+                items = await retrieveCheapestItemsIncludingAllCurrencies(collection, perPage, (page - 1) * perPage, belowRank);
+            numberOfItems = await retrieveElrondNumberOfItems(collection);
+            items = items.map(i => ({...i, url: buildTrustMarketUrlFromDbItem(i, collection)}))
+            break;
     }
-
-    let numberOfItems = await retrieveNumberOfItems(collection);
 
     res.send({
         items: items,
         contract: contract,
         numberOfItems: numberOfItems,
+        rates: rates,
     });
 });
 
@@ -69,7 +90,11 @@ app.get('/getCollections?', async (req, res) => {
 
     switch (blockchain) {
         case 'terra':
-            items = await getCollectionsName();
+            items = await getTerraCollectionsName();
+            break;
+        case 'elrond':
+            items = await getElrondCollectionsName();
+            break;
     }
 
     res.send({
@@ -79,5 +104,10 @@ app.get('/getCollections?', async (req, res) => {
 
 app.listen(port, () => {
     initTerraConnection();
+    initElrondConnection();
+    // todo: load rates
+    rates.EGLD = 78.37;
+    rates.MEX = 0.00009152;
+    loadLKMexPrice();
     console.log(`Example app listening on port ${port}`)
 })

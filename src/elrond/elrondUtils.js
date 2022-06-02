@@ -57,6 +57,8 @@ export const getLastTransactions = async (contract, offset, amount) => {
 }
 
 export const buildTrustMarketUrlFromDbItem = (item, collection) => {
-    const hexNFTNumber = item.token_id.toString(16);
-    return `https://www.trust.market/nft/${collection}-${hexNFTNumber}`
+    let hexNFTNumber = item.token_id.toString(16);
+    if (hexNFTNumber.length === 3 || hexNFTNumber.length === 1)
+        hexNFTNumber = `0${hexNFTNumber}`;
+    return `https://www.trust.market/nft/${collection}-${hexNFTNumber}`;
 }

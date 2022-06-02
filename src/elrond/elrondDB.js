@@ -1,19 +1,27 @@
 import {
-    _closeConnection_,
-    _deleteCollection_,
-    _initConnection_, _retrieveCheapestItems_,
-    _retrieveItems_, _retrieveItemsSorted_,
-    _updateItems_,
-    _updateItemWithObjectId_,
+    _addHistoryEntryToItem_,
     _addItemsToCollection_,
     _addItemToCollection_,
     _addRankToItems_,
     _addUniqueIndex_,
+    _closeConnection_,
     _createCollection_,
-    _updateItem_, _upsertItem_, _getCollectionsName_, _retrieveCheapestItemsUnderRank_,
-    _retrieveCheapestItemsWithSpecialTrait_, _addHistoryEntryToItem_, _deleteItem_
+    _deleteCollection_,
+    _deleteItem_,
+    _getCollectionsName_,
+    _initConnection_,
+    _retrieveCheapestItems_,
+    _retrieveCheapestItemsUnderRank_,
+    _retrieveCheapestItemsWithSpecialTrait_,
+    _retrieveItems_,
+    _retrieveItemsSorted_,
+    _updateItem_,
+    _updateItems_,
+    _updateItemWithObjectId_,
+    _upsertItem_
 } from "../db/db.js";
 import {createRequire} from "module";
+import {rates} from "./priceRateService.js";
 
 const require = createRequire(import.meta.url);
 export const config = require("./config.json");
@@ -54,6 +62,31 @@ export const retrieveItemsSorted = async (collectionKey, filter, limit = 10, sor
  */
 export const retrieveCheapestItems = async (collectionKey, filter = {}, limit = 10, skip = 0) => {
     return _retrieveCheapestItems_(client, dbName, collectionKey, filter, limit, skip)
+}
+
+export const retrieveCheapestItemsIncludingAllCurrencies = async (collectionKey, limit = 10, skip = 0) => {
+
+    const cheapestItemsInEGLD = (await retrieveCheapestItems(collectionKey, {
+        currency: 'EGLD'
+    }, limit, skip))?.map((i) => {
+        return {
+            ...i,
+            priceInEGLD: i.price
+        }
+    });
+    const cheapestItemsInLKMex = (await retrieveCheapestItems(collectionKey, {
+        currency: 'LKMEX-aab910'
+    }, limit, skip)).map((i) => {
+        return {
+            ...i,
+            priceInEGLD: i.price * rates["LK-MEX"] / rates.EGLD,
+        };
+    });
+
+    return [
+        ...cheapestItemsInLKMex,
+        ...cheapestItemsInEGLD
+    ].sort((a,b) => a.priceInEGLD - b.priceInEGLD);
 }
 
 /**

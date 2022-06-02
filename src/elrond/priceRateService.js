@@ -1,7 +1,7 @@
 import {fetchWithTimeout, timer} from "../utils.js";
-const FIVE_MINUTES = 5*60*1000;
+const FIVE_MINUTES = 7*60*1000;
 import fetch, {Headers} from 'node-fetch';
-import {base64ToHex, decodeTransactionData, hexToDecimal, microCurrencyToCurrency} from "./elrondUtils.js";
+import {base64ToHex, hexToDecimal} from "./elrondUtils.js";
 export const rates = {
     "EGLD": -1,
     "RIDE": -1,
@@ -9,7 +9,7 @@ export const rates = {
     "LK-MEX": -1
 }
 
-const loadLKMexPrice = async () => {
+export const loadLKMexPrice = async () => {
     try {
         const myHeaders = new Headers();
         myHeaders.append("Accept", "application/json, text/plain, */*");
@@ -48,7 +48,6 @@ const loadLKMexPrice = async () => {
         const result = json.data.data.returnData;
         const mexPrice = hexToDecimal(base64ToHex(result[1]));
         const lkMexPrice = hexToDecimal(base64ToHex(result[0]));
-        console.log(mexPrice/lkMexPrice)
         rates["LK-MEX"] = lkMexPrice/mexPrice * rates.MEX;
     } catch (e) {
         rates["LK-MEX"] = -1;
@@ -84,10 +83,11 @@ const loadPriceRates = async () => {
 }
 
 export const priceRateService = async () => {
-    await timer(FIVE_MINUTES);
+    rates.EGLD = -1;
+    rates.RIDE = -1;
+    rates.MEX = -1;
+    rates["LK-MEX"] = -1;
     await loadPriceRates();
     await loadLKMexPrice();
-    console.log(rates)
+    await timer(FIVE_MINUTES);
 }
-
-priceRateService();
