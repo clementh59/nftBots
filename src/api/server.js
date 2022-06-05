@@ -17,7 +17,7 @@ import {
 import express from 'express';
 import cors from 'cors';
 import {getCollectionNameWithContract, getContractWithCollectionName} from "../terra/terraUtils.js";
-import {buildTrustMarketUrlFromDbItem} from "../elrond/elrondUtils.js";
+import {buildUrlFromDbItem} from "../elrond/elrondUtils.js";
 import {loadLKMexPrice, rates} from "../elrond/priceRateService.js";
 
 const app = express()
@@ -72,7 +72,7 @@ app.get('/getCheapestItems?', async (req, res) => {
             else
                 items = await retrieveCheapestItemsIncludingAllCurrencies(collection, perPage, (page - 1) * perPage, belowRank);
             numberOfItems = await retrieveElrondNumberOfItems(collection);
-            items = items.map(i => ({...i, url: buildTrustMarketUrlFromDbItem(i, collection)}))
+            items = items.map(i => ({...i, url: buildUrlFromDbItem(i, collection)}))
             break;
     }
 
