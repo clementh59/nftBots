@@ -20,7 +20,7 @@ import {upsertItem} from "./elrondDB.js";
 import {analyzeSales} from "./analysisAlgorithm.js";
 
 // set it to true if
-const updateDB = true;
+const updateDB = config.updateDB;
 
 let collectionUpdated = [];
 
@@ -160,7 +160,7 @@ const analyzeTrustMarketTransaction = async (tx) => {
                 await removeFromDb(number, collection);
                 break;
             default:
-                addToLogSystem('unsupported transaction')
+                addToLogSystem('unsupported transaction trustmarket')
                 addToLogSystem(JSON.stringify(tx));
                 break;
         }
@@ -171,6 +171,8 @@ const analyzeTrustMarketTransaction = async (tx) => {
 }
 
 const setLastTransactionAnalyzed = async (tx) => {
+    if (!updateDB)
+        return;
     await setLastTransactionAnalyzedTrustMarket(tx.txHash, tx.timestamp);
     return {
         hash: tx.txHash,

@@ -1,7 +1,6 @@
 import {rates} from "./priceRateService.js";
 import {addToLogErrorSystem, addToLogSystem} from "../logSystem.js";
 import {initConnection, retrieveCheapestItems, retrieveCheapestItemsIncludingAllCurrencies} from "./elrondDB.js";
-import {buildTrustMarketUrlFromDbItem} from "./elrondUtils.js";
 import {buy} from "./actions/autoBuy.js";
 
 /**

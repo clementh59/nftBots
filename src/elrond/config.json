@@ -1,7 +1,9 @@
 {
+  "updateDB": true,
   "timeBetweenElrondAPIRequests": 3000,
   "contracts": {
-    "trustMarket": "erd1qqqqqqqqqqqqqpgq6wegs2xkypfpync8mn2sa5cmpqjlvrhwz5nqgepyg8"
+    "trustMarket": "erd1qqqqqqqqqqqqqpgq6wegs2xkypfpync8mn2sa5cmpqjlvrhwz5nqgepyg8",
+    "deadRare": "erd1qqqqqqqqqqqqqpgqd9rvv2n378e27jcts8vfwynpx0gfl5ufz6hqhfy0u0"
   },
   "collectionHandled": [
     {"name": "galactic_punks", "triggerFactor": 5, "rarityFactor": 3},

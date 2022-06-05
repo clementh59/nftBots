@@ -295,6 +295,18 @@ export const getCollectionsName = async () => {
 }
 
 /**
+ * Deleet all elrond collections data, except the info db
+ * @returns {Promise<void>}
+ */
+export const deleteAllNFTCollections = async () => {
+    const cs = await getCollectionsName();
+    for (let i = 0; i < cs.length; i++) {
+        if (cs[i] !== 'info')
+            await deleteCollection(cs[i]);
+    }
+}
+
+/**
  * Delete a collection
  * @param {string} collectionKey - the collection name
  * @returns {Promise<boolean>} true if it succeeded - false otherwise

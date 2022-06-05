@@ -35,6 +35,18 @@ export const getLastTransactionIdAnalyzedTrustMarket = async () => {
     return getLastTransactionIdAnalyzed('TrustMarket');
 }
 
+export const setLastTransactionAnalyzedDeadRare = async (lastTxHash, lastTxTimestamp) => {
+    return setLastTransactionAnalyzed(lastTxHash, lastTxTimestamp, 'DeadRare');
+}
+
+/**
+ *
+ * @returns {Promise<{hash: *, timestamp: *}>}
+ */
+export const getLastTransactionIdAnalyzedDeadRare = async () => {
+    return getLastTransactionIdAnalyzed('DeadRare');
+}
+
 /**
  * @param {string} platform - e.g 'TrustMarket'
  * @returns {Promise<{hash: *, timestamp: *}>}

@@ -62,3 +62,18 @@ export const buildTrustMarketUrlFromDbItem = (item, collection) => {
         hexNFTNumber = `0${hexNFTNumber}`;
     return `https://www.trust.market/nft/${collection}-${hexNFTNumber}`;
 }
+
+export const buildDeadRareUrlFromDbItem = (item, collection) => {
+    let hexNFTNumber = item.token_id.toString(16);
+    if (hexNFTNumber.length === 3 || hexNFTNumber.length === 1)
+        hexNFTNumber = `0${hexNFTNumber}`;
+    return `https://www.trust.market/nft/${collection}-${hexNFTNumber}`;
+}
+
+export const buildUrlFromDbItem = (item, collection) => {
+    switch (item.marketplace) {
+        case 'DeadRare': return buildDeadRareUrlFromDbItem(item, collection);
+        case 'TrustMarket': return buildTrustMarketUrlFromDbItem(item, collection);
+        default: return buildTrustMarketUrlFromDbItem(item, collection);
+    }
+}
