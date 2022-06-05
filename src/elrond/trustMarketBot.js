@@ -1,5 +1,6 @@
 import {retrieveAndAnalyzeTxs, timer} from "../utils.js";
 import {createRequire} from "module";
+
 const require = createRequire(import.meta.url);
 const config = require("./config.json");
 import {
@@ -16,38 +17,49 @@ import {
     getLastTransactionIdAnalyzedTrustMarket,
     setLastTransactionAnalyzedTrustMarket
 } from "./infoAndStatusDB/infoAndStatusDB.js";
-import {upsertItem} from "./elrondDB.js";
+import {deleteItem, retrieveItems, upsertItem} from "./elrondDB.js";
 import {analyzeSales} from "./analysisAlgorithm.js";
 
 // set it to true if
-const updateDB = config.updateDB;
+//const updateDB = config.updateDB;
+const updateDB = false;
+const ordersCollection = 'trustMarketOrders';
 
 let collectionUpdated = [];
 
-const addToDb = async (number, collection, price, timestamp, txHash, currency) => {
+const addToDb = async (number, collection, price, timestamp, txHash, currency, orderId) => {
     if (!updateDB)
         return;
     collectionUpdated.push(collection);
-    await upsertItem(collection, {token_id: number}, {
-        token_id: number,
-        order: config.constants.order.SALE,
-        marketplace: 'TrustMarket',
-        price: price,
-        hash: txHash,
-        currency: currency,
-        //owner: info.seller,
-        status: {
-            date: new Date(timestamp*1000).toDateString(),
-        },
-    });
+    await Promise.all([
+        upsertItem(collection, {token_id: number}, {
+            token_id: number,
+            order: config.constants.order.SALE,
+            marketplace: 'TrustMarket',
+            price: price,
+            hash: txHash,
+            currency: currency,
+            //owner: info.seller,
+            status: {
+                date: new Date(timestamp * 1000).toDateString(),
+            },
+        }),
+        upsertItem(ordersCollection, {orderId: orderId}, {
+            orderId,
+            collection,
+            number,
+            type: 'sale'
+        })
+    ]);
 }
 
-const removeFromDb = async (number, collection) => {
+const removeFromDb = async (number, collection, txHash) => {
     if (!updateDB)
         return;
     const update = {
         token_id: number,
         order: config.constants.order.NONE,
+        hash: txHash
     }
 
     collectionUpdated.push(collection);
@@ -58,6 +70,18 @@ const removeFromDb = async (number, collection) => {
         status: "",
         currency: ""
     });
+}
+
+const removeFromDbFromOrderId = async (orderId, txHash) => {
+    if (!updateDB)
+        return;
+
+    const {number, collection} = (await retrieveItems(ordersCollection, {orderId: orderId}, 1))[0];
+
+    await Promise.all([
+        removeFromDb(number, collection, txHash),
+        deleteItem(ordersCollection, {collection: collection, number: number})
+    ]);
 }
 
 /**
@@ -84,7 +108,6 @@ const analyzeTrustMarketTransaction = async (tx) => {
 
         switch (tx.function) {
             case 'buy':
-
                 if (tx.action.category === 'esdtNft') {
                     const args = tx.action.arguments;
                     hexCollectionName = args.functionArgs[1];
