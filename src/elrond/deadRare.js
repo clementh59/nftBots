@@ -91,8 +91,7 @@ const analyzeDeadRareTransaction = async (tx) => {
                 price = microCurrencyToCurrency(hexToDecimal(parts[4]));
                 collection = hexToString(hexCollectionName);
                 number = hexToDecimal(hexNFTNumber);
-                console.log(`Price change - https://deadrare.io/nft/${collection}-${hexNFTNumber} - ${price} EGLD`);
-                // todo: db
+                //console.log(`Price change - https://deadrare.io/nft/${collection}-${hexNFTNumber} - ${price} EGLD`);
                 await addToDb(number, collection, price, tx.timestamp, tx.txHash);
                 break;
             case 'buyNft':
@@ -100,9 +99,8 @@ const analyzeDeadRareTransaction = async (tx) => {
                 hexNFTNumber = parts[3];
                 collection = hexToString(hexCollectionName);
                 number = hexToDecimal(hexNFTNumber);
-                console.log(`New item bought - https://deadrare.io/nft/${collection}-${hexNFTNumber}`);
+                //console.log(`New item bought - https://deadrare.io/nft/${collection}-${hexNFTNumber}`);
                 await removeFromDb(number, collection);
-                //todo: db
                 break;
             case 'ESDTNFTTransfer':
                 hexCollectionName = parts[1];
@@ -110,7 +108,7 @@ const analyzeDeadRareTransaction = async (tx) => {
                 price = microCurrencyToCurrency(hexToDecimal(parts[6]));
                 collection = hexToString(hexCollectionName);
                 number = hexToDecimal(hexNFTNumber);
-                console.log(`New listing - https://deadrare.io/nft/${collection}-${hexNFTNumber} - ${price} EGLD`);
+                //console.log(`New listing - https://deadrare.io/nft/${collection}-${hexNFTNumber} - ${price} EGLD`);
                 break;
             case 'rejectOffer':
                 break;
