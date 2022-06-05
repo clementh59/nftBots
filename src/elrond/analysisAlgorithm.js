@@ -2,12 +2,18 @@ import {rates} from "./services/priceRateService.js";
 import {addToLogErrorSystem, addToLogSystem} from "../logSystem.js";
 import {initConnection, retrieveCheapestItems, retrieveCheapestItemsIncludingAllCurrencies} from "./db/elrondDB.js";
 import {buy} from "./actions/autoBuy.js";
+import {areAllMarketplacesUpToDate} from "./services/coordinator.js";
 
 /**
  * Analyze all DB to check if smthg is interesting
  * @param {[string]} collections - the contract addresses of collections - NOT NAMES
  */
 export const analyzeSales = async (collections) => {
+
+    const dbIsReady = await areAllMarketplacesUpToDate();
+
+    if (!dbIsReady)
+        return;
 
     if (
         rates.EGLD === -1

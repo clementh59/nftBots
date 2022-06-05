@@ -23,6 +23,8 @@ export const initInfoDbConnection = async () => {
     return !!client;
 }
 
+// region trustmarket
+
 export const setLastTransactionAnalyzedTrustMarket = async (lastTxHash, lastTxTimestamp) => {
     return setLastTransactionAnalyzed(lastTxHash, lastTxTimestamp, 'TrustMarket');
 }
@@ -35,6 +37,23 @@ export const getLastTransactionIdAnalyzedTrustMarket = async () => {
     return getLastTransactionIdAnalyzed('TrustMarket');
 }
 
+/**
+ *
+ * @param {boolean} answer
+ * @returns {Promise<void>}
+ */
+export const setTrustMarketIsUpToDate = async (answer) => {
+    return setIsUpToDate('TrustMarket', answer);
+}
+
+export const isTrustMarketUpToDate = async () => {
+    return await getIsUpToDate('TrustMarket');
+}
+
+//endregion
+
+//region deadrare
+
 export const setLastTransactionAnalyzedDeadRare = async (lastTxHash, lastTxTimestamp) => {
     return setLastTransactionAnalyzed(lastTxHash, lastTxTimestamp, 'DeadRare');
 }
@@ -45,6 +64,43 @@ export const setLastTransactionAnalyzedDeadRare = async (lastTxHash, lastTxTimes
  */
 export const getLastTransactionIdAnalyzedDeadRare = async () => {
     return getLastTransactionIdAnalyzed('DeadRare');
+}
+
+/**
+ *
+ * @param {boolean} answer
+ * @returns {Promise<void>}
+ */
+export const setDeadRareIsUpToDate = async (answer) => {
+    return setIsUpToDate('DeadRare', answer);
+}
+
+export const isDeadRareUpToDate = async () => {
+    return await getIsUpToDate('DeadRare');
+}
+
+//endregion
+
+/**
+ * @param {string} platform - e.g 'TrustMarket'
+ * @returns {Promise<boolean>}
+ */
+const getIsUpToDate = async (platform) => {
+    const items = await _retrieveItems_(client, dbName, collectionName, {}, 1);
+    return items[0][`${platform}IsUpToDate`];
+}
+
+/**
+ *
+ * @param {{string}} platform
+ * @param {{boolean}} answer
+ * @returns {Promise<void>}
+ * @private
+ */
+const setIsUpToDate = async (platform, answer) => {
+    const values = {};
+    values[`${platform}IsUpToDate`] = answer;
+    return _updateItem_(client, dbName, collectionName, {}, values);
 }
 
 /**

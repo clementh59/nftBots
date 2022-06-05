@@ -12,7 +12,7 @@ import {
 } from "./../elrondUtils.js";
 import {addToLogErrorSystem, addToLogSystem} from "../../logSystem.js";
 import {
-    getLastTransactionIdAnalyzedDeadRare,
+    getLastTransactionIdAnalyzedDeadRare, setDeadRareIsUpToDate,
     setLastTransactionAnalyzedDeadRare
 } from "../db/infoAndStatusDB.js";
 import {deleteItem, initConnection, retrieveItems, upsertItem} from "./../db/elrondDB.js";
@@ -96,6 +96,7 @@ const removeFromDbFromOrderId = async (orderId, txHash) => {
  * @returns {Promise<void>}
  */
 export const endOfLoopTreatment = async () => {
+    setDeadRareIsUpToDate(true); // no need to await
     await analyzeSales(collectionUpdated);
     collectionUpdated = [];
 }
@@ -191,6 +192,7 @@ export const deadRareBot = async () => {
         console.log('warning - updateDB is set to false!!!!!');
         await timer(5000);
     }
+    await setDeadRareIsUpToDate(false);
     const lastTxAnalyzed = await getLastTransactionIdAnalyzedDeadRare();
     retrieveAndAnalyzeTxs({
         "getLastTransactions": getLastTxs,

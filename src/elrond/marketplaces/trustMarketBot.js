@@ -1,4 +1,4 @@
-import {retrieveAndAnalyzeTxs, timer} from "../utils.js";
+import {retrieveAndAnalyzeTxs, timer} from "../../utils.js";
 import {createRequire} from "module";
 
 const require = createRequire(import.meta.url);
@@ -13,7 +13,7 @@ import {
 import {addToLogErrorSystem, addToLogSystem} from "../../logSystem.js";
 import {
     getLastTransactionIdAnalyzedTrustMarket,
-    setLastTransactionAnalyzedTrustMarket
+    setLastTransactionAnalyzedTrustMarket, setTrustMarketIsUpToDate
 } from "../db/infoAndStatusDB.js";
 import {deleteItem, retrieveItems, upsertItem} from "../db/elrondDB.js";
 import {analyzeSales} from "../analysisAlgorithm.js";
@@ -135,9 +135,9 @@ const removeFromDbFromOrderId = async (orderId, txHash) => {
  * @returns {Promise<void>}
  */
 export const endOfLoopTreatment = async () => {
-    return;
     if (!updateDB)
         return;
+    setTrustMarketIsUpToDate(true); // no need to await
     await analyzeSales(collectionUpdated);
     collectionUpdated = [];
 }
@@ -254,6 +254,7 @@ export const trustMarketBot = async () => {
         console.log('warning - updateDB is set to false!!!!!')
         await timer(5000);
     }
+    await setTrustMarketIsUpToDate(false);
     const lastTxAnalyzed = await getLastTransactionIdAnalyzedTrustMarket();
     retrieveAndAnalyzeTxs({
         "getLastTransactions": getLastTxs,
