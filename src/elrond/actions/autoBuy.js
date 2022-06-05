@@ -4,5 +4,5 @@ import {addToLogSystem} from "../../logSystem.js";
 
 export const buy = (item, collection, message) => {
     addToLogSystem(message);
-    openURLInChrome(buildUrlFromDbItem(item, collection));
+    //openURLInChrome(buildUrlFromDbItem(item, collection));
 }

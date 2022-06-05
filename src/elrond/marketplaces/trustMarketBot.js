@@ -2,23 +2,21 @@ import {retrieveAndAnalyzeTxs, timer} from "../utils.js";
 import {createRequire} from "module";
 
 const require = createRequire(import.meta.url);
-const config = require("./config.json");
+const config = require("../config.json");
 import {
-    base64ToHex,
-    decodeBase64,
     decodeTransactionData,
     getLastTransactions,
     hexToDecimal,
     hexToString,
     microCurrencyToCurrency
-} from "./elrondUtils.js";
-import {addToLogErrorSystem, addToLogSystem} from "../logSystem.js";
+} from "./../elrondUtils.js";
+import {addToLogErrorSystem, addToLogSystem} from "../../logSystem.js";
 import {
     getLastTransactionIdAnalyzedTrustMarket,
     setLastTransactionAnalyzedTrustMarket
-} from "./infoAndStatusDB/infoAndStatusDB.js";
-import {deleteItem, retrieveItems, upsertItem} from "./elrondDB.js";
-import {analyzeSales} from "./analysisAlgorithm.js";
+} from "../db/infoAndStatusDB.js";
+import {deleteItem, retrieveItems, upsertItem} from "../db/elrondDB.js";
+import {analyzeSales} from "../analysisAlgorithm.js";
 
 // set it to true if you want to update db
 const updateDB = config.updateDB;
@@ -26,6 +24,7 @@ const ordersCollection = 'trustMarketOrders';
 
 let collectionUpdated = [];
 
+//region db
 const addToDb = async (number, collection, price, timestamp, txHash, currency, orderId) => {
     if (!updateDB)
         return;
@@ -50,6 +49,44 @@ const addToDb = async (number, collection, price, timestamp, txHash, currency, o
             type: 'sale'
         })
     ]);
+}
+
+const addOfferToDb = async (number, collection, orderId) => {
+    if (!updateDB)
+        return;
+    await upsertItem(ordersCollection, {orderId: orderId}, {
+        orderId,
+        collection,
+        number,
+        type: 'offer'
+    })
+}
+
+const changePrice = async (orderId, price, currency, txHash) => {
+    if (!updateDB)
+        return;
+
+    const res = (await retrieveItems(ordersCollection, {orderId: orderId}, 1))[0];
+
+    if (!res)
+        return;
+
+    const collection = res.collection;
+    const number = res.number;
+
+    if (!collection || !number)
+        return;
+
+    collectionUpdated.push(collection);
+    await upsertItem(collection, {token_id: number}, {
+        token_id: number,
+        order: config.constants.order.SALE,
+        marketplace: 'TrustMarket',
+        price: price,
+        hash: txHash,
+        currency: currency,
+        //owner: info.seller,
+    });
 }
 
 const removeFromDb = async (number, collection, txHash) => {
@@ -91,12 +128,14 @@ const removeFromDbFromOrderId = async (orderId, txHash) => {
         deleteItem(ordersCollection, {collection: collection, number: number})
     ]);
 }
+//endregion db
 
 /**
  * The function that is called when db is up to date with the blockchain
  * @returns {Promise<void>}
  */
 export const endOfLoopTreatment = async () => {
+    return;
     if (!updateDB)
         return;
     await analyzeSales(collectionUpdated);
@@ -114,56 +153,61 @@ const analyzeTrustMarketTransaction = async (tx) => {
         if (tx.status !== 'success')
             return;
 
-        let hexCollectionName, hexNFTNumber, price, currency, number, collection, data, parts, topics;
+        let hexCollectionName, hexNFTNumber, price, currency, number, collection, data, parts, topics, orderId;
+
+        parts = decodeTransactionData(tx.data);
 
         switch (tx.function) {
-            case 'buy':
-                if (tx.action.category === 'esdtNft') {
-                    const args = tx.action.arguments;
-                    hexCollectionName = args.functionArgs[1];
-                    hexNFTNumber = args.functionArgs[2];
-                    price = microCurrencyToCurrency(args.transfers[0].value);
-                    currency = args.transfers[0].ticker;
-                    //todo: check if it is the real lkmex (not fake currencies)
-                } else {
-                    data = tx.data;
-                    parts = decodeTransactionData(data);
-                    hexCollectionName = parts[2];
-                    hexNFTNumber = parts[3];
-                    price = microCurrencyToCurrency(tx.value);
-                    currency = 'EGLD';
-                }
-
-                collection = hexToString(hexCollectionName);
-                number = hexToDecimal(hexNFTNumber);
-                //console.log(`New item bought - https://www.trust.market/nft/${collection}-${hexNFTNumber} - ${price} ${currency}`);
-                await removeFromDb(number, collection);
-                break;
             case 'listing':
-                parts = decodeTransactionData(tx.data);
                 hexCollectionName = parts[1];
                 hexNFTNumber = parts[2];
                 price = microCurrencyToCurrency(hexToDecimal(parts[7]));
                 currency = hexToString(parts[9]);
-
                 collection = hexToString(hexCollectionName);
                 number = hexToDecimal(hexNFTNumber);
-                //console.log(`Listing - https://www.trust.market/nft/${collection}-${hexNFTNumber} - ${price} ${currency}`)
-                await addToDb(number, collection, price, tx.timestamp, tx.txHash, currency);
+
+                orderId = decodeTransactionData(tx.results[tx.results.length - 1].data)[2];
+                //console.log(`Listing - https://www.trust.market/nft/${collection}-${hexNFTNumber} #${orderId} - ${price} ${currency}`)
+                await addToDb(number, collection, price, tx.timestamp, tx.txHash, currency, orderId);
+                break;
+            case 'buy':
+                if (parts[0] === 'buy') {
+                    await removeFromDbFromOrderId(parts[1], tx.txHash);
+                } else if (parts[0] === 'ESDTNFTTransfer') {
+                    await removeFromDbFromOrderId(parts[6], tx.txHash);
+                } else if (parts[0] === 'ESDTTransfer') {
+                    await removeFromDbFromOrderId(parts[4], tx.txHash);
+                }
+                else {
+                    addToLogErrorSystem('Unsupported tx from buy trust market')
+                    addToLogErrorSystem(JSON.stringify(tx));
+                }
                 break;
             case 'withdraw':
+                await removeFromDbFromOrderId(parts[1]);
                 break;
             case 'changePrice':
-                topics = tx.logs.events[0].topics;
-                collection = decodeBase64(topics[1]);
-                hexNFTNumber = base64ToHex(topics[2]);
-                number = hexToDecimal(hexNFTNumber);
-                currency = decodeBase64(topics[7]);
-                price = microCurrencyToCurrency(hexToDecimal(base64ToHex(topics[6])));
+                if (parts.length === 3) {
+                    price = microCurrencyToCurrency(hexToDecimal(parts[2]));
+                    await changePrice(parts[1], price, 'EGLD', tx.txHash);
+                } else {
+                    addToLogErrorSystem('Unsupported tx from changePrice trust market');
+                    addToLogErrorSystem(JSON.stringify(tx));
+                }
                 //console.log(`Price change - https://www.trust.market/nft/${collection}-${hexNFTNumber} - ${price} ${currency}`)
-                await addToDb(number, collection, price, tx.timestamp, tx.txHash, currency);
                 break;
             case 'sendOffer':
+                if (parts[0] === 'ESDTNFTTransfer') {
+                    hexCollectionName = parts[6];
+                    hexNFTNumber = parts[7];
+                } else if (parts[0] === 'sendOffer') {
+                    hexCollectionName = parts[1];
+                    hexNFTNumber = parts[2];
+                }
+                collection = hexToString(hexCollectionName);
+                number = hexToDecimal(hexNFTNumber);
+                orderId = decodeTransactionData(tx.results[tx.results.length - 1].data)[2];
+                await addOfferToDb(number, collection, orderId);
                 break;
             case 'withdrawOffer':
                 break;
@@ -174,31 +218,16 @@ const analyzeTrustMarketTransaction = async (tx) => {
             case 'endAuction':
                 break;
             case 'acceptOffer':
-                let event = tx.logs.events.find(i => i.identifier === 'acceptOffer');
-                if (event) {
-                    topics = event.topics;
-                    collection = decodeBase64(topics[1]);
-                    hexNFTNumber = base64ToHex(topics[2]);
-                    number = hexToDecimal(hexNFTNumber);
-                    price = microCurrencyToCurrency(hexToDecimal(base64ToHex(topics[7])));
-                    currency = decodeBase64(topics[5]);
-                } else {
-                    parts = decodeTransactionData(tx.data);
-                    hexCollectionName = parts[1];
-                    hexNFTNumber = parts[2];
-                    collection = hexToString(hexCollectionName);
-                    number = hexToDecimal(hexNFTNumber);
-                }
-                //console.log(`Offer accepted - https://www.trust.market/nft/${collection}-${hexNFTNumber} - ${price} ${currency}`)
-                await removeFromDb(number, collection);
+                await removeFromDbFromOrderId(parts[1]);
                 break;
             default:
                 addToLogSystem('unsupported transaction trustmarket')
                 addToLogSystem(JSON.stringify(tx));
                 break;
         }
+
     } catch (e) {
-        addToLogErrorSystem('TX analysis thrown');
+        addToLogErrorSystem('TX analysis thrown (trust market)');
         addToLogErrorSystem(JSON.stringify(tx));
     }
 }
@@ -237,3 +266,18 @@ export const trustMarketBot = async () => {
         "endOfLoopTreatment": endOfLoopTreatment,
     });
 }
+
+/*const tx = {};
+
+const test = async () => {
+    //await initConnection();
+    for (let i = 0; i < 199; i++) {
+        const txs = await getLastTxs(i * 50);
+        for (let j = 0; j < txs.length; j++) {
+            await analyzeTrustMarketTransaction(txs[j]);
+        }
+    }
+    //await analyzeTrustMarketTransaction(tx);
+    console.log('done');
+};
+test()*/

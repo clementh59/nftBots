@@ -19,12 +19,12 @@ import {
     _updateItems_,
     _updateItemWithObjectId_,
     _upsertItem_
-} from "../db/db.js";
+} from "../../db/db.js";
 import {createRequire} from "module";
-import {rates} from "./priceRateService.js";
+import {rates} from "../services/priceRateService.js";
 
 const require = createRequire(import.meta.url);
-export const config = require("./config.json");
+export const config = require("../config.json");
 let client;
 const dbName = config.mongo.dbs.collections;
 

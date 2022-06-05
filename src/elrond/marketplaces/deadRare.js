@@ -1,22 +1,22 @@
-import {retrieveAndAnalyzeTxs, timer} from "../utils.js";
+import {retrieveAndAnalyzeTxs, timer} from "../../utils.js";
 import {createRequire} from "module";
 
 const require = createRequire(import.meta.url);
-const config = require("./config.json");
+const config = require("../config.json");
 import {
     decodeTransactionData,
     getLastTransactions,
     hexToDecimal,
     hexToString,
     microCurrencyToCurrency
-} from "./elrondUtils.js";
-import {addToLogErrorSystem, addToLogSystem} from "../logSystem.js";
+} from "./../elrondUtils.js";
+import {addToLogErrorSystem, addToLogSystem} from "../../logSystem.js";
 import {
     getLastTransactionIdAnalyzedDeadRare,
     setLastTransactionAnalyzedDeadRare
-} from "./infoAndStatusDB/infoAndStatusDB.js";
-import {deleteItem, initConnection, retrieveItems, upsertItem} from "./elrondDB.js";
-import {analyzeSales} from "./analysisAlgorithm.js";
+} from "../db/infoAndStatusDB.js";
+import {deleteItem, initConnection, retrieveItems, upsertItem} from "./../db/elrondDB.js";
+import {analyzeSales} from "./../analysisAlgorithm.js";
 
 // set it to true if you want to update db
 const updateDB = config.updateDB;
@@ -164,7 +164,7 @@ const analyzeDeadRareTransaction = async (tx) => {
 
     } catch (e) {
         console.log(e);
-        addToLogErrorSystem('TX analysis thrown');
+        addToLogErrorSystem('TX analysis thrown (deadrare)');
         addToLogErrorSystem(JSON.stringify(tx));
     }
 }

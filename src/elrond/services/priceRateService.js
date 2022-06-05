@@ -1,7 +1,7 @@
-import {fetchWithTimeout, timer} from "../utils.js";
+import {fetchWithTimeout, timer} from "../../utils.js";
 const FIVE_MINUTES = 7*60*1000;
 import fetch, {Headers} from 'node-fetch';
-import {base64ToHex, hexToDecimal} from "./elrondUtils.js";
+import {base64ToHex, hexToDecimal} from "./../elrondUtils.js";
 export const rates = {
     "EGLD": -1,
     "RIDE": -1,

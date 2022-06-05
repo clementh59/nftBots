@@ -1,4 +1,5 @@
 import {fetchWithTimeout} from "../utils.js";
+import {addToLogErrorSystem} from "../logSystem.js";
 
 export const microCurrencyToCurrency = (micro) => {
     return micro / 1000000000000000000;

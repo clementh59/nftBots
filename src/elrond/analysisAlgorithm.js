@@ -1,6 +1,6 @@
-import {rates} from "./priceRateService.js";
+import {rates} from "./services/priceRateService.js";
 import {addToLogErrorSystem, addToLogSystem} from "../logSystem.js";
-import {initConnection, retrieveCheapestItems, retrieveCheapestItemsIncludingAllCurrencies} from "./elrondDB.js";
+import {initConnection, retrieveCheapestItems, retrieveCheapestItemsIncludingAllCurrencies} from "./db/elrondDB.js";
 import {buy} from "./actions/autoBuy.js";
 
 /**
