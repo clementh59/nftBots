@@ -53,7 +53,7 @@ export const _retrieveCheapestItems_ = async (client, dbName, collectionKey, fil
         ...filter
     };
     const res = await client.db(dbName).collection(collectionKey).find(_filter).sort({price: 1}).skip(skip).limit(limit).toArray();
-    return res.filter(i => !isNaN(i.price));
+    return res.filter(i => !isNaN(i.price)).filter(i => i.price > 0);
 }
 
 /**
