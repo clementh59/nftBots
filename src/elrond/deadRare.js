@@ -74,7 +74,16 @@ const removeFromDbFromOrderId = async (orderId, txHash) => {
     if (!updateDB)
         return;
 
-    const {number, collection} = (await retrieveItems(ordersCollection, {orderId: orderId}, 1))[0];
+    const res = (await retrieveItems(ordersCollection, {orderId: orderId}, 1))[0];
+
+    if (!res)
+        return;
+
+    const collection = res.collection;
+    const number = res.number;
+
+    if (!collection || !number)
+        return;
 
     await Promise.all([
         removeFromDb(number, collection, txHash),
@@ -145,6 +154,7 @@ const analyzeDeadRareTransaction = async (tx) => {
             case 'withdrawOffer':
                 break;
             case 'acceptOffer':
+                await removeFromDbFromOrderId(parts[1], tx.txHash);
                 break;
             default:
                 addToLogSystem('unsupported transaction deadrare');
@@ -153,6 +163,7 @@ const analyzeDeadRareTransaction = async (tx) => {
         }
 
     } catch (e) {
+        console.log(e);
         addToLogErrorSystem('TX analysis thrown');
         addToLogErrorSystem(JSON.stringify(tx));
     }
@@ -192,3 +203,9 @@ export const deadRareBot = async () => {
         "endOfLoopTreatment": endOfLoopTreatment,
     });
 }
+
+/*const test = async () => {
+    await initConnection();
+    await analyzeDeadRareTransaction(tx);
+    console.log('done')
+};*/

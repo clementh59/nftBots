@@ -20,9 +20,8 @@ import {
 import {deleteItem, retrieveItems, upsertItem} from "./elrondDB.js";
 import {analyzeSales} from "./analysisAlgorithm.js";
 
-// set it to true if
-//const updateDB = config.updateDB;
-const updateDB = false;
+// set it to true if you want to update db
+const updateDB = config.updateDB;
 const ordersCollection = 'trustMarketOrders';
 
 let collectionUpdated = [];
@@ -76,7 +75,16 @@ const removeFromDbFromOrderId = async (orderId, txHash) => {
     if (!updateDB)
         return;
 
-    const {number, collection} = (await retrieveItems(ordersCollection, {orderId: orderId}, 1))[0];
+    const res = (await retrieveItems(ordersCollection, {orderId: orderId}, 1))[0];
+
+    if (!res)
+        return;
+
+    const collection = res.collection;
+    const number = res.number;
+
+    if (!collection || !number)
+        return;
 
     await Promise.all([
         removeFromDb(number, collection, txHash),
@@ -89,6 +97,8 @@ const removeFromDbFromOrderId = async (orderId, txHash) => {
  * @returns {Promise<void>}
  */
 export const endOfLoopTreatment = async () => {
+    if (!updateDB)
+        return;
     await analyzeSales(collectionUpdated);
     collectionUpdated = [];
 }
