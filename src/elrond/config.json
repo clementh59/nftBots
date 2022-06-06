@@ -1,7 +1,7 @@
 {
   "updateDB": true,
   "waitForCoordinator": true,
-  "timeBetweenElrondAPIRequests": 500,
+  "timeBetweenElrondAPIRequests": 5000,
   "contracts": {
     "trustMarket": "erd1qqqqqqqqqqqqqpgq6wegs2xkypfpync8mn2sa5cmpqjlvrhwz5nqgepyg8",
     "deadRare": "erd1qqqqqqqqqqqqqpgqd9rvv2n378e27jcts8vfwynpx0gfl5ufz6hqhfy0u0"

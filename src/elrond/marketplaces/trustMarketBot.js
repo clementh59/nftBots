@@ -203,6 +203,12 @@ const analyzeTrustMarketTransaction = async (tx) => {
                 } else if (parts[0] === 'sendOffer') {
                     hexCollectionName = parts[1];
                     hexNFTNumber = parts[2];
+                } else if (parts[0] === 'ESDTTransfer') {
+                    hexCollectionName = parts[4];
+                    hexNFTNumber = parts[5];
+                } else {
+                    addToLogSystem('unsupported transaction trustmarket - sendOffer');
+                    addToLogSystem(JSON.stringify(tx));
                 }
                 collection = hexToString(hexCollectionName);
                 number = hexToDecimal(hexNFTNumber);

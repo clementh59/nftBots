@@ -12,13 +12,13 @@ import {
     retrieveNumberOfItems as retrieveElrondNumberOfItems,
     retrieveCheapestItems as retrieveElrondCheapestItems,
     retrieveCheapestItemsUnderRank as retrieveElrondCheapestItemsUnderRank, retrieveCheapestItemsIncludingAllCurrencies,
-} from "../elrond/elrondDB.js";
+} from "../elrond/db/elrondDB.js";
 
 import express from 'express';
 import cors from 'cors';
 import {getCollectionNameWithContract, getContractWithCollectionName} from "../terra/terraUtils.js";
 import {buildUrlFromDbItem} from "../elrond/elrondUtils.js";
-import {loadLKMexPrice, rates} from "../elrond/priceRateService.js";
+import {loadLKMexPrice, rates} from "../elrond/services/priceRateService.js";
 
 const app = express()
 const port = 2727;
