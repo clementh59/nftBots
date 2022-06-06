@@ -2,6 +2,8 @@ import {fetchWithTimeout, timer} from "../../utils.js";
 const FIVE_MINUTES = 7*60*1000;
 import fetch, {Headers} from 'node-fetch';
 import {base64ToHex, hexToDecimal} from "./../elrondUtils.js";
+import {retrieveItems, upsertItem} from "../db/elrondDB.js";
+import {addToLogSystem} from "../../logSystem.js";
 export const rates = {
     "EGLD": -1,
     "RIDE": -1,
@@ -74,7 +76,8 @@ const loadPriceRates = async () => {
         }
         Object.values(json.data).forEach((v) => {
             rates[v.symbol] = v.quote.USD.price;
-        })
+        });
+        console.log(rates);
     } catch (e) {
         rates.EGLD = -1;
         rates.RIDE = -1;
@@ -82,12 +85,19 @@ const loadPriceRates = async () => {
     }
 }
 
+const savePrices = async () => {
+    await upsertItem('prices', {}, rates, {});
+}
+
+export const loadPrices = async () => {
+    return (await retrieveItems('prices', {}))[0];
+}
+
 export const priceRateService = async () => {
-    rates.EGLD = -1;
-    rates.RIDE = -1;
-    rates.MEX = -1;
-    rates["LK-MEX"] = -1;
     await loadPriceRates();
     await loadLKMexPrice();
+    await savePrices();
     await timer(FIVE_MINUTES);
+    addToLogSystem(`New rates are ${rates.EGLD}$ for EGLD`);
+    priceRateService();
 }

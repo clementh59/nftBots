@@ -18,7 +18,7 @@ import express from 'express';
 import cors from 'cors';
 import {getCollectionNameWithContract, getContractWithCollectionName} from "../terra/terraUtils.js";
 import {buildUrlFromDbItem} from "../elrond/elrondUtils.js";
-import {loadLKMexPrice, rates} from "../elrond/services/priceRateService.js";
+import {loadLKMexPrice, loadPrices, rates} from "../elrond/services/priceRateService.js";
 
 const app = express()
 const port = 2727;
@@ -76,6 +76,8 @@ app.get('/getCheapestItems?', async (req, res) => {
             break;
     }
 
+    const rates = await loadPrices();
+
     res.send({
         items: items,
         contract: contract,
@@ -105,9 +107,5 @@ app.get('/getCollections?', async (req, res) => {
 app.listen(port, () => {
     initTerraConnection();
     initElrondConnection();
-    // todo: load rates
-    rates.EGLD = 78.37;
-    rates.MEX = 0.00009152;
-    loadLKMexPrice();
     console.log(`Example app listening on port ${port}`)
 })

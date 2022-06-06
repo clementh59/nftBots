@@ -2,12 +2,32 @@
   "updateDB": true,
   "waitForCoordinator": true,
   "timeBetweenElrondAPIRequests": 5000,
+  "minBenefInEGLD": 0.15,
   "contracts": {
     "trustMarket": "erd1qqqqqqqqqqqqqpgq6wegs2xkypfpync8mn2sa5cmpqjlvrhwz5nqgepyg8",
     "deadRare": "erd1qqqqqqqqqqqqqpgqd9rvv2n378e27jcts8vfwynpx0gfl5ufz6hqhfy0u0"
   },
   "collectionHandled": [
-    {"name": "galactic_punks", "triggerFactor": 5, "rarityFactor": 3},
+    {"name": "GUARDIAN-3d6635", "triggerFactor": 5},
+    {"name": "AERMES-ac9886", "triggerFactor": 5},
+    {"name": "EAPES-8f3c1f", "triggerFactor": 5},
+    {"name": "GNOGONS-73222b", "triggerFactor": 5},
+    {"name": "DRIFTERS-efd96c", "triggerFactor": 5},
+    {"name": "MAIARPUNKS-3db7e8", "triggerFactor": 4},
+    {"name": "RAPTOR-28e21c", "triggerFactor": 4},
+    {"name": "SAC-c60db0", "triggerFactor": 5},
+    {"name": "PRE-807532", "triggerFactor": 2},
+    {"name": "BDGA-a05446", "triggerFactor": 3},
+    {"name": "QUACK-f01e02", "triggerFactor": 4},
+    {"name": "HHP-76d251", "triggerFactor": 2},
+    {"name": "HSWOLF-76e8bf", "triggerFactor": 4},
+    {"name": "REALM-579543", "triggerFactor": 3},
+    {"name": "PASS-1c7c6a", "triggerFactor": 3},
+    {"name": "WWWINE-5a5331", "triggerFactor": 3},
+    {"name": "SYMB-a060b0", "triggerFactor": 4},
+    {"name": "INNOVATOR-fca3a7", "triggerFactor": 3},
+    {"name": "WARRIORZ-2f0986", "triggerFactor": 5},
+
     {"name": "default", "buy": false}
   ],
   "triggerScale": {
@@ -15,7 +35,7 @@
     "2": "0.2",
     "3": "0.35",
     "4": "0.5",
-    "5": "0.75"
+    "5": "0.7"
   },
   "rarityScale": {
     "0": "0",

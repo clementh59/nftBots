@@ -8,9 +8,9 @@ import {deadRareBot} from "./marketplaces/deadRare.js";
 import {areAllMarketplacesUpToDate} from "./services/coordinator.js";
 
 const elrondBot = async () => {
-  priceRateService();
   await initInfoDbConnection();
   await initConnection();
+  priceRateService();
   trustMarketBot();
   deadRareBot();
   //await deleteAllNFTCollections();
