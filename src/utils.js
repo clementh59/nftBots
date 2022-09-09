@@ -149,5 +149,3 @@ export const retrieveAndAnalyzeTxs = async (context) => {
     let txsToAnalyze = [];
     retrieveAndAnalyzeTxsLoop(context, 0, txsToAnalyze);
 }
-
-sendMail('text', 'object');
